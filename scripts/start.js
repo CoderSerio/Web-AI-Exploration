@@ -38,11 +38,7 @@ class ProjectLaucher {
 }
 
 const feLaucher = new ProjectLaucher("前端", "../packages/frontend", "run dev");
-const bffLaucher = new ProjectLaucher(
-  "BFF层",
-  "../packages/backend/bff",
-  "run start"
-);
+const bffLaucher = new ProjectLaucher("BFF层", "../packages/bff", "run start");
 
 feLaucher.start();
 bffLaucher.start();
