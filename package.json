@@ -5,9 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:windows": "node scripts/start.js",
-    "start:linux": "echo \"not suppoted yet\"",
-    "start:macos": "npm run start:linux"
+    "start": "node scripts/start.js"
   },
   "keywords": [],
   "author": "",
