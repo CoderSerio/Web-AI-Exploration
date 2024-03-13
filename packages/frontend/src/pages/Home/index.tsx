@@ -1,27 +1,26 @@
 import Guide from '@/components/Guide';
 import { trim } from '@/utils/format';
 import { PageContainer } from '@ant-design/pro-components';
-import { useModel } from '@umijs/max';
+// import { useModel } from '@umijs/max';
 import { createVideoStreamWebSocketConnection } from '@/apis/index';
-import { useEffect } from 'react';
+import { useLayoutEffect, useRef } from 'react';
 import styles from './index.less';
 import VideoCanvas from '@/components/VideoCanvas';
+import { Socket } from 'socket.io-client';
 
 const HomePage: React.FC = () => {
-  const { name } = useModel('global');
+  // const { name } = useModel('global');
+  const socketRef = useRef<Socket>()
 
-
-  useEffect(() => {
-    const sendVideoStream = createVideoStreamWebSocketConnection()
-    sendVideoStream('Hi')
+  useLayoutEffect(() => {
+    socketRef.current = createVideoStreamWebSocketConnection()
   }, [])
 
 
   return (
     <PageContainer ghost>
       <div className={styles.container}>
-        <Guide name={trim(name)} />
-        <VideoCanvas></VideoCanvas>
+        <VideoCanvas socketRef={socketRef as any}></VideoCanvas>
       </div>
     </PageContainer>
   );

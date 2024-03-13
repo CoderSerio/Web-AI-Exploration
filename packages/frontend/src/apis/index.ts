@@ -1,8 +1,9 @@
 import { initWebSocket } from '@/utils/request';
+import { Socket } from 'socket.io-client';
 
 const baseUrl = 'http://localhost:4000/';
 
-export const createVideoStreamWebSocketConnection = () => {
+export const createVideoStreamWebSocketConnection = (): Socket => {
   const websocket = initWebSocket({
     path: `${baseUrl}`,
     handleConnect: () => {
@@ -13,9 +14,9 @@ export const createVideoStreamWebSocketConnection = () => {
     },
   });
 
-  const sendVideoStream = (msg: string) => {
-    websocket.emit('client-send-message', msg);
-  };
+  // const sendVideoStream = (msg: string) => {
+  //   websocket.emit('client-send-message', msg);
+  // };
 
-  return sendVideoStream;
+  return websocket;
 };

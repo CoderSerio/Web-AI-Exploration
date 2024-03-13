@@ -8,10 +8,6 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
-import { UseFilters, UseInterceptors } from '@nestjs/common';
-import { WsServiceResponseInterceptor } from '../../base/interceptor/ws-service.response.interceptor';
-import { WsServiceExceptionFilter } from '../../base/filter/ws-service.exception.filter';
-
 // 安装WebSocket成功响应拦截器
 // @UseInterceptors(new WsServiceResponseInterceptor())
 // // 安装WebSocket异常过滤器
@@ -43,7 +39,7 @@ export class WSGateway
     if (!data) {
       throw new Error('WebSocket NO DATA!');
     }
-    console.log(JSON.stringify(data));
+    console.log('收到了');
     return 'received reqData';
   }
 }
