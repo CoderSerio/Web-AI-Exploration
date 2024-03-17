@@ -9,14 +9,14 @@ const MODEL_URLS = {
   ssdMobilenetv1: '../models/ssd_mobilenet_v1_model',
 };
 
-
+const testData = [1]
 
 interface VideoCanvasProps {
   socketRef: MutableRefObject<Socket>
 }
 
 const VideoCanvas = ({ socketRef }: VideoCanvasProps) => {
-
+  const testDataRef = useRef<Array<number>>([])
   const canvasForCaptureRef = useRef<HTMLCanvasElement>(null)
   const canvasForDisplayRef = useRef<HTMLCanvasElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -94,6 +94,14 @@ const VideoCanvas = ({ socketRef }: VideoCanvasProps) => {
 
   return (
     <div>
+      <div onClick={() => {
+        testDataRef.current.push(1)
+        console.log(testData, testDataRef.current)
+        testDataRef.current = [1, 2, 3]
+        console.log(testData, testDataRef.current)
+      }}>
+        +1
+      </div>
       <video ref={videoRef} autoPlay></video>
       <canvas ref={canvasForDisplayRef}></canvas>
       <canvas ref={canvasForCaptureRef}></canvas>
