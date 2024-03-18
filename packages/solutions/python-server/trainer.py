@@ -2,7 +2,7 @@ import os
 import sys
 import tensorflow as tf
 from tqdm import tqdm
-from model import mobilenet_v3_large
+from model import mobilenet_v3_large, mobilenet_v3_small
 from utils import load_data
 import matplotlib.pyplot as plt
 
@@ -13,6 +13,7 @@ batch_size = 16
 epochs = 200
 num_classes = 7
 freeze_layer = False
+batch_size = 100
 
 def load():
     train_x, train_y = load_data('packages/datasets/images/train', image_height, image_width, image_channel, num_classes)
@@ -20,7 +21,7 @@ def load():
     return train_x, train_y, test_x, test_y
 
 def train(train_x, train_y, test_x, test_y): 
-    model = mobilenet_v3_large(
+    model = mobilenet_v3_small(
         input_shape=(image_height, image_width, image_channel),
         num_classes=num_classes,
         include_top=True
@@ -29,18 +30,21 @@ def train(train_x, train_y, test_x, test_y):
     model.summary()
 
     model.compile(
-        optimizer=tf.keras.optimizers.Adam(0.0001),
+        optimizer=tf.keras.optimizers.Adam(0.000005),
         loss=tf.keras.losses.CategoricalCrossentropy(),
-        metrics=['accuracy']
+        metrics=['accuracy'],
+        loss=[losses.categorical_crossentropy, losses.mean_squared_error],
+        loss_weights=[1., 0.5]
     )
 
     histtory = model.fit(
         train_x,
         train_y,
+        batch_size=batch_size,
         verbose=1,
         epochs=epochs,
         validation_data=(test_x, test_y),
-        callbacks=[tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=15, restore_best_weights=True)]
+        callbacks=[tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=30, restore_best_weights=True)]
     )
 
     return model, histtory

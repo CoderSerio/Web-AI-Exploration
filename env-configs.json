@@ -1,0 +1,8 @@
+{
+  "ports": {
+    "frontend": "",
+    "backend-for-frontend": "",
+    "solution-python-server": "",
+    "solution-nodejs-server": ""
+  }
+}
