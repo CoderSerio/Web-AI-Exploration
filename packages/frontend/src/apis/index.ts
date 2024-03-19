@@ -1,7 +1,7 @@
 import { initWebSocket } from '@/utils/request';
 import { Socket } from 'socket.io-client';
 
-const baseUrl = 'http://localhost:4000/';
+const baseUrl = 'http://localhost:8811';
 
 export const createVideoStreamWebSocketConnection = (): Socket => {
   const websocket = initWebSocket({

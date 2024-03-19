@@ -2,11 +2,11 @@
   "private": true,
   "author": "CoderSerio <2779066456@qq.com>",
   "scripts": {
-    "dev": "max dev",
     "build": "max build",
+    "dev": "max dev --port 8001",
     "format": "prettier --cache --write .",
-    "prepare": "husky install",
     "postinstall": "max setup",
+    "prepare": "husky install",
     "setup": "max setup",
     "start": "npm run dev"
   },
@@ -15,7 +15,7 @@
     "@ant-design/pro-components": "^2.6.49",
     "@tensorflow-models/face-landmarks-detection": "^1.0.5",
     "@tensorflow/tfjs": "^4.17.0",
-    "@umijs/max": "^4.1.1",
+    "@umijs/max": "^4.1.2",
     "@vladmandic/face-api": "^1.7.13",
     "antd": "^5.14.1",
     "install": "^0.13.0",

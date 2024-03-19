@@ -1,3 +1,5 @@
+// import { NodejsServiceSocketGateway } from './../service-socket/nodejs-service-socket.gateway';
+import { PythonServiceSocketGateway } from './python-service-socket.gateway';
 import {
   SubscribeMessage,
   WebSocketGateway as WebSocketGatewayDecorator,
@@ -7,8 +9,9 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { Inject } from '@nestjs/common';
 
-@WebSocketGatewayDecorator(4000, {
+@WebSocketGatewayDecorator(8811, {
   cors: {
     origin: '*',
   },
@@ -16,26 +19,31 @@ import { Server, Socket } from 'socket.io';
 export class WebSocketGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
+  private nextServerSocket: Socket;
   @WebSocketServer() server: Server;
 
+  constructor(
+    @Inject(PythonServiceSocketGateway)
+    private readonly pythonServiceSocketGateway: PythonServiceSocketGateway,
+  ) {}
+
   afterInit(server: Server) {
-    console.log('Socket.IO server initialized!');
+    console.log('ws服务初始化完毕');
   }
 
   handleConnection(client: Socket, ...args: any[]) {
-    console.log('Client connected: ', client.id);
+    console.log('ws连接成功');
   }
 
   handleDisconnect(client: Socket) {
-    console.log('Client disconnected: ', client.id);
+    console.log('ws连接已断开');
   }
 
-  @SubscribeMessage('client-send-message')
+  @SubscribeMessage('backend-for-frontend-message')
   handleMessage(client: Socket, data: any): string {
-    if (!data) {
-      throw new Error('WebSocket NO DATA!');
-    }
-    console.log('收到了');
+    console.log('收到了', data);
+    this.pythonServiceSocketGateway.send('你好啊11');
+
     return 'received reqData';
   }
 }

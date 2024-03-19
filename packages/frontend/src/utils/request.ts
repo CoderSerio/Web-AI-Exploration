@@ -1,4 +1,5 @@
 import io from 'socket.io-client';
+import envConfig from '../../../../env-configs.json';
 
 type CommonHandler = (...args: any[]) => void;
 
@@ -20,9 +21,12 @@ export const initWebSocket = ({
     handleConnect();
   });
 
-  socket.on('server-send-message', (response: any) => {
-    handleMessage(response);
-  });
+  socket.on(
+    envConfig['socket-keys']['backend-for-frontend'],
+    (response: any) => {
+      handleMessage(response);
+    },
+  );
 
   socket.on('disconnect', () => {
     console.log('disconnected！');

@@ -5,8 +5,12 @@ import { BaseServiceSocket } from './base-service-socket';
 @Injectable()
 export class NodejsServiceSocketGateway extends BaseServiceSocket {
   constructor() {
-    super('ws://');
+    super('http://127.0.0.1:8830');
     this.init();
+  }
+
+  public send(data: any) {
+    this.socket.emit('nodejs-server-message', data);
   }
 
   protected handleConnect(): void {}

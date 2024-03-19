@@ -4,13 +4,14 @@ import { io, Socket } from 'socket.io-client';
 
 @Injectable()
 export abstract class BaseServiceSocket {
-  private socket: Socket;
+  protected socket: Socket;
 
   constructor(private readonly url: string) {}
 
   protected abstract handleConnect(): void;
   protected abstract handleMessage(message: any): void;
   protected abstract handleDisconnect(): void;
+  protected abstract send(data: any): void;
 
   public init() {
     this.socket = io(this.url);
@@ -30,15 +31,5 @@ export abstract class BaseServiceSocket {
     this.socket.on('disconnect', () => {
       console.log('Disconnected from downstream Socket.IO server');
     });
-  }
-
-  public send(key: string, data: any) {
-    if (this.socket.connected) {
-      this.socket.emit(key, data);
-    } else {
-      console.error(
-        'Unable to send message to downstream server, connection is not open',
-      );
-    }
   }
 }

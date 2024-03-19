@@ -84,8 +84,8 @@ const VideoCanvas = ({ socketRef }: VideoCanvasProps) => {
     timer = setInterval(() => {
       const frameData = getSingleFrame()
       updateFaceMark(frameData as string)
-      socketRef.current.emit('client-send-message', frameData)
-    }, 1500)
+      socketRef.current.emit('backend-for-frontend-message', frameData)
+    }, 1000)
 
     return () => {
       clearInterval(timer)

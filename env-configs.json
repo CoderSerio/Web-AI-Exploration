@@ -1,8 +1,17 @@
 {
+  "ip": "127.0.0.1",
   "ports": {
-    "frontend": "",
-    "backend-for-frontend": "",
-    "solution-python-server": "",
-    "solution-nodejs-server": ""
+    "env-server": "8790",
+    "frontend": "8001",
+    "backend-for-frontend": "8810",
+    "backend-for-frontend-ws": "8811",
+    "solution-python-server": "8820",
+    "solution-nodejs-server": "8830"
+  },
+  "socket-keys": {
+    "frontend": "frontend-message",
+    "backend-for-frontend": "backend-for-frontend-message",
+    "solution-python-server": "python-server-message",
+    "solution-nodejs-server": "nodejs-server-message"
   }
 }
