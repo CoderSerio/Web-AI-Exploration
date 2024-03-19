@@ -1,13 +1,6 @@
 import { useRef, useLayoutEffect, MutableRefObject, useEffect } from "react"
 import { Socket } from "socket.io-client"
-import * as tf from '@tensorflow/tfjs';
-import * as facemesh from '@tensorflow-models/face-landmarks-detection';
 import * as faceApi from '@vladmandic/face-api';
-
-
-const MODEL_URLS = {
-  ssdMobilenetv1: '../models/ssd_mobilenet_v1_model',
-};
 
 const testData = [1]
 
@@ -18,7 +11,7 @@ interface VideoCanvasProps {
 const VideoCanvas = ({ socketRef }: VideoCanvasProps) => {
   const testDataRef = useRef<Array<number>>([])
   const canvasForCaptureRef = useRef<HTMLCanvasElement>(null)
-  const canvasForDisplayRef = useRef<HTMLCanvasElement>(null)
+  const canvasForResizedCaptureRef = useRef<HTMLCanvasElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
   const isFaceMarkLoadedRef = useRef<boolean>(false)
 
@@ -29,13 +22,12 @@ const VideoCanvas = ({ socketRef }: VideoCanvasProps) => {
     }
     canvasForCaptureRef.current?.getContext('2d')?.drawImage(videoRef.current, 0, 0, canvasForCaptureRef.current.width, canvasForCaptureRef.current.height)
     const frameData = canvasForCaptureRef.current?.toDataURL('image/png', 0.8)
-    // console.log(frameData)
     return frameData
   }
 
   /** 初始化摄像头 */
   const setupCamera = async () => {
-    if (navigator?.mediaDevices?.getUserMedia as unknown as boolean && videoRef.current && canvasForDisplayRef.current) {
+    if (navigator?.mediaDevices?.getUserMedia as unknown as boolean && videoRef.current) {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true })
       videoRef.current.srcObject = stream
     } else {
@@ -46,10 +38,6 @@ const VideoCanvas = ({ socketRef }: VideoCanvasProps) => {
   /** 初始化模型 */
   const initFaceMark = async () => {
     try {
-      // await faceApi.loadTinyFaceDetectorModel(
-      //   '/models',
-      // )
-
       await faceApi.loadSsdMobilenetv1Model('/models');
       await faceApi.loadFaceLandmarkModel('/models');
       await faceApi.loadFaceExpressionModel('/models');
@@ -57,10 +45,6 @@ const VideoCanvas = ({ socketRef }: VideoCanvasProps) => {
     } catch (err) {
       throw `模型加载失败: ${err}`
     }
-    // await faceApi.loadSsdMobilenetv1Model(
-    //   '/models',
-    // )
-
   }
 
   const updateFaceMark = async (base64: string) => {
@@ -69,8 +53,17 @@ const VideoCanvas = ({ socketRef }: VideoCanvasProps) => {
     image.onload = async () => {
       if (canvasForCaptureRef.current && isFaceMarkLoadedRef.current) {
         const options = new faceApi.SsdMobilenetv1Options()
-        // new faceApi.TinyFaceDetectorOptions()
         const faces = await faceApi.detectAllFaces(image, options).withFaceLandmarks().withFaceExpressions()
+        faces.forEach((face) => {
+          const { width, height, x, y } = face.detection.box as any
+          const canvas = canvasForResizedCaptureRef.current as HTMLCanvasElement
+          const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
+          ctx?.drawImage(
+            image,
+            x, y, width, height,
+            0, 0, 48, 48
+          )
+        })
         faceApi.draw.drawDetections(canvasForCaptureRef.current, faces)
       }
     }
@@ -85,7 +78,7 @@ const VideoCanvas = ({ socketRef }: VideoCanvasProps) => {
       const frameData = getSingleFrame()
       updateFaceMark(frameData as string)
       socketRef.current.emit('backend-for-frontend-message', frameData)
-    }, 1000)
+    }, 2000)
 
     return () => {
       clearInterval(timer)
@@ -103,8 +96,8 @@ const VideoCanvas = ({ socketRef }: VideoCanvasProps) => {
         +1
       </div>
       <video ref={videoRef} autoPlay></video>
-      <canvas ref={canvasForDisplayRef}></canvas>
       <canvas ref={canvasForCaptureRef}></canvas>
+      <canvas ref={canvasForResizedCaptureRef}></canvas>
     </div>
   )
 }
