@@ -1,8 +1,7 @@
 import { useRef, useLayoutEffect, MutableRefObject, useEffect } from "react"
 import { Socket } from "socket.io-client"
 import * as faceApi from '@vladmandic/face-api';
-
-const testData = [1]
+import styles from './index.less'
 
 interface VideoCanvasProps {
   socketRef: MutableRefObject<Socket>
@@ -89,7 +88,7 @@ const VideoCanvas = ({ socketRef }: VideoCanvasProps) => {
     timer = setInterval(() => {
       const frameData = getSingleFrame()
       updateFaceMark(frameData as string)
-    }, 2000)
+    }, 1000)
 
     return () => {
       clearInterval(timer)
@@ -97,7 +96,7 @@ const VideoCanvas = ({ socketRef }: VideoCanvasProps) => {
   }, [])
 
   return (
-    <div>
+    <div className={styles.wrapper}>
       <video ref={videoRef} autoPlay></video>
       <canvas width={640} height={480} ref={canvasForCaptureRef}></canvas>
       <canvas width={48} height={48} ref={canvasForResizedCaptureRef} style={{ scale: 3 }}></canvas>
