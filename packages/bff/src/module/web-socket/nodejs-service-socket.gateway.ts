@@ -6,7 +6,7 @@ import { BaseServiceSocket } from './base-service-socket';
 export class NodejsServiceSocketGateway extends BaseServiceSocket {
   constructor() {
     super('http://127.0.0.1:8830');
-    this.init();
+    this.init('nodejs-server-message');
   }
 
   public send(data: any) {

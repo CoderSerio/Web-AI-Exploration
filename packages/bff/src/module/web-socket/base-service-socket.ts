@@ -13,14 +13,14 @@ export abstract class BaseServiceSocket {
   protected abstract handleDisconnect(): void;
   protected abstract send(data: any): void;
 
-  public init() {
+  public init(eventName: string) {
     this.socket = io(this.url);
 
     this.socket.on('connect', () => {
       this.handleConnect();
     });
 
-    this.socket.on('message', (data: any) => {
+    this.socket.on(eventName, (data: any) => {
       this.handleMessage(data);
     });
 

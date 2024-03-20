@@ -19,7 +19,6 @@ import { Inject } from '@nestjs/common';
 export class WebSocketGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
-  private nextServerSocket: Socket;
   @WebSocketServer() server: Server;
 
   constructor(
@@ -37,13 +36,14 @@ export class WebSocketGateway
 
   handleDisconnect(client: Socket) {
     console.log('ws连接已断开');
+    this.pythonServiceSocketGateway.removeClient(client as any);
   }
 
   @SubscribeMessage('backend-for-frontend-message')
   handleMessage(client: Socket, data: any): string {
-    console.log('收到了', data);
-    this.pythonServiceSocketGateway.send('你好啊11');
-
-    return 'received reqData';
+    console.log(`收到了来自[${data.id}]的数据\n`, data.content);
+    this.pythonServiceSocketGateway.send(data);
+    this.pythonServiceSocketGateway.addClient(client as any);
+    return 'data received';
   }
 }

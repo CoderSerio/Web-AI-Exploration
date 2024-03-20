@@ -21,7 +21,7 @@ const VideoCanvas = ({ socketRef }: VideoCanvasProps) => {
       throw '获取视频源失败'
     }
     canvasForCaptureRef.current?.getContext('2d')?.drawImage(videoRef.current, 0, 0, canvasForCaptureRef.current.width, canvasForCaptureRef.current.height)
-    const frameData = canvasForCaptureRef.current?.toDataURL('image/png', 0.8)
+    const frameData = canvasForCaptureRef.current?.toDataURL('image/jpeg', 0.8)
     return frameData
   }
 
@@ -55,14 +55,26 @@ const VideoCanvas = ({ socketRef }: VideoCanvasProps) => {
         const options = new faceApi.SsdMobilenetv1Options()
         const faces = await faceApi.detectAllFaces(image, options).withFaceLandmarks().withFaceExpressions()
         faces.forEach((face) => {
+
           const { width, height, x, y } = face.detection.box as any
+          let scale;
+          if (width / height >= 48 / 48) {
+            scale = 48 / width;
+          } else {
+            scale = 48 / height;
+          }
+          const scaledWidth = width * scale;
+          const scaledHeight = height * scale;
+          const offsetX = (48 - scaledWidth) / 2;
+          const offsetY = (48 - scaledHeight) / 2;
+
           const canvas = canvasForResizedCaptureRef.current as HTMLCanvasElement
           const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
           ctx?.drawImage(
-            image,
-            x, y, width, height,
-            0, 0, 48, 48
+            image, x, y, width, height, offsetX, offsetY, scaledWidth, scaledHeight
           )
+          const frameData = canvas.toDataURL('image/jpeg', 0.8)
+          socketRef.current.emit('backend-for-frontend-message', { id: 'frontend', content: frameData })
         })
         faceApi.draw.drawDetections(canvasForCaptureRef.current, faces)
       }
@@ -77,7 +89,6 @@ const VideoCanvas = ({ socketRef }: VideoCanvasProps) => {
     timer = setInterval(() => {
       const frameData = getSingleFrame()
       updateFaceMark(frameData as string)
-      socketRef.current.emit('backend-for-frontend-message', frameData)
     }, 2000)
 
     return () => {
@@ -87,17 +98,9 @@ const VideoCanvas = ({ socketRef }: VideoCanvasProps) => {
 
   return (
     <div>
-      <div onClick={() => {
-        testDataRef.current.push(1)
-        console.log(testData, testDataRef.current)
-        testDataRef.current = [1, 2, 3]
-        console.log(testData, testDataRef.current)
-      }}>
-        +1
-      </div>
       <video ref={videoRef} autoPlay></video>
-      <canvas ref={canvasForCaptureRef}></canvas>
-      <canvas ref={canvasForResizedCaptureRef}></canvas>
+      <canvas width={640} height={480} ref={canvasForCaptureRef}></canvas>
+      <canvas width={48} height={48} ref={canvasForResizedCaptureRef} style={{ scale: 3 }}></canvas>
     </div>
   )
 }
