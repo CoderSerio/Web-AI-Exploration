@@ -1,6 +1,8 @@
 from typing import Union
 from functools import partial
 from tensorflow.keras import layers, Model
+import tensorflow as tf
+
 
 def _make_divisible(ch, divisor=8, min_ch=None):
     """
@@ -36,6 +38,7 @@ class HardSigmoid(layers.Layer):
     """
     激活函数, H-Sigmoid(x) = ReLU6(x + 3) / 6
     """
+
     def __init__(self, **kwargs):
         super(HardSigmoid, self).__init__(**kwargs)
         self.relu6 = layers.ReLU(6.)
@@ -44,10 +47,12 @@ class HardSigmoid(layers.Layer):
         x = self.relu6(inputs + 3) * (1. / 6)
         return x
 
+
 class HardSwish(layers.Layer):
     """
     H-Sigmoid 的改进版本，H-Swish(x) = x * H-Sigmoid(x)， 差不多一个东西
     """
+
     def __init__(self, **kwargs):
         super(HardSwish, self).__init__(**kwargs)
         self.hard_sigmoid = HardSigmoid()
@@ -65,7 +70,8 @@ def _se_block(inputs, filters, prefix, se_ratio=1 / 4.):
         prefix 名称前缀，用来当id的
         ratio 是 1/4
     """
-    x = layers.GlobalAveragePooling2D(name=prefix + 'squeeze_excite-AvgPool')(inputs)
+    x = layers.GlobalAveragePooling2D(
+        name=prefix + 'squeeze_excite-AvgPool')(inputs)
 
     x = layers.Reshape((1, 1, filters))(x)
 
@@ -99,7 +105,6 @@ def _inverted_res_block(x,
                         stride: int,
                         block_id: int,
                         alpha: float = 1.0):
-
     """
         倒残差结构 也叫 bottleNeck 结构（瓶颈）
     """
@@ -121,6 +126,7 @@ def _inverted_res_block(x,
                           kernel_size=1,
                           padding='same',
                           use_bias=False,
+                          kernel_regularizer=tf.keras.regularizers.l2(0.01),
                           name=prefix + 'expand')(x)
         x = bn(name=prefix + 'expand-BatchNorm')(x)
         x = act(name=prefix + 'expand-' + act.__name__)(x)
@@ -136,6 +142,7 @@ def _inverted_res_block(x,
                                use_bias=False,
                                name=prefix + 'depthwise')(x)
     x = bn(name=prefix + 'depthwise-BatchNorm')(x)
+    x = layers.Dropout(0.2, name=prefix + 'project-Dropout')(x)
     x = act(name=prefix + 'depthwise-' + act.__name__)(x)
 
     if use_se:
@@ -210,85 +217,22 @@ def mobilenet_v3_large(input_shape=(224, 224, 3),
         x = layers.Conv2D(filters=last_point_c,
                           kernel_size=1,
                           padding='same',
-                          name="Conv_2")(x)
+                          name="Conv_2",
+
+                          kernel_regularizer=tf.keras.regularizers.l2(0.01)
+                          )(x)
         x = HardSwish(name="Conv_2-HardSwish")(x)
 
         # fc2
         x = layers.Conv2D(filters=num_classes,
                           kernel_size=1,
                           padding='same',
-                          name='Logits-Conv2d_1c_1x1')(x)
+                          name='Logits-Conv2d_1c_1x1',
+                          kernel_regularizer=tf.keras.regularizers.l2(0.01)
+                          )(x)
         x = layers.Flatten()(x)
         x = layers.Softmax(name="Predictions")(x)
 
     model = Model(img_input, x, name="MobilenetV3Large")
-
-    return model
-
-
-def mobilenet_v3_small(input_shape=(224, 224, 3),
-                       num_classes=1000,
-                       alpha=1.0,
-                       include_top=True):
-    """
-        精简版的
-    """
-    bn = partial(layers.BatchNormalization, epsilon=0.001, momentum=0.99)
-    img_input = layers.Input(shape=input_shape)
-
-    x = layers.Conv2D(filters=16,
-                      kernel_size=3,
-                      strides=(2, 2),
-                      padding='same',
-                      use_bias=False,
-                      name="Conv")(img_input)
-    x = bn(name="Conv_BatchNorm")(x)
-    x = HardSwish(name="Conv_HardSwish")(x)
-
-    inverted_cnf = partial(_inverted_res_block, alpha=alpha)
-    # input, input_c, k_size, expand_c, use_se, activation, stride, block_id
-    x = inverted_cnf(x, 16, 3, 16, 16, True, "RE", 2, 0)
-    x = inverted_cnf(x, 16, 3, 72, 24, False, "RE", 2, 1)
-    x = inverted_cnf(x, 24, 3, 88, 24, False, "RE", 1, 2)
-    x = inverted_cnf(x, 24, 5, 96, 40, True, "HS", 2, 3)
-    x = inverted_cnf(x, 40, 5, 240, 40, True, "HS", 1, 4)
-    x = inverted_cnf(x, 40, 5, 240, 40, True, "HS", 1, 5)
-    x = inverted_cnf(x, 40, 5, 120, 48, True, "HS", 1, 6)
-    x = inverted_cnf(x, 48, 5, 144, 48, True, "HS", 1, 7)
-    x = inverted_cnf(x, 48, 5, 288, 96, True, "HS", 2, 8)
-    x = inverted_cnf(x, 96, 5, 576, 96, True, "HS", 1, 9)
-    x = inverted_cnf(x, 96, 5, 576, 96, True, "HS", 1, 10)
-
-    last_c = _make_divisible(96 * 6 * alpha)
-    last_point_c = _make_divisible(1024 * alpha)
-
-    x = layers.Conv2D(filters=last_c,
-                      kernel_size=1,
-                      padding='same',
-                      use_bias=False,
-                      name="Conv_1")(x)
-    x = bn(name="Conv_1-BatchNorm")(x)
-    x = HardSwish(name="Conv_1-HardSwish")(x)
-
-    if include_top is True:
-        x = layers.GlobalAveragePooling2D()(x)
-        x = layers.Reshape((1, 1, last_c))(x)
-
-        # fc1
-        x = layers.Conv2D(filters=last_point_c,
-                          kernel_size=1,
-                          padding='same',
-                          name="Conv_2")(x)
-        x = HardSwish(name="Conv_2-HardSwish")(x)
-
-        # fc2
-        x = layers.Conv2D(filters=num_classes,
-                          kernel_size=1,
-                          padding='same',
-                          name='Logits-Conv2d_1c_1x1')(x)
-        x = layers.Flatten()(x)
-        x = layers.Softmax(name="Predictions")(x)
-
-    model = Model(img_input, x, name="MobilenetV3large")
 
     return model

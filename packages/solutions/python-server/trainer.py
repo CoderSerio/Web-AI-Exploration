@@ -1,7 +1,4 @@
-import os
-import sys
 import tensorflow as tf
-from tqdm import tqdm
 from model import mobilenet_v3_large, mobilenet_v3_small
 from utils import load_data
 import matplotlib.pyplot as plt
@@ -9,19 +6,22 @@ import matplotlib.pyplot as plt
 image_height = 48
 image_width = 48
 image_channel = 3
-batch_size = 16
-epochs = 200
-num_classes = 7
-freeze_layer = False
 batch_size = 100
+epochs = 100
+patience = 10
+num_classes = 7
+
 
 def load():
-    train_x, train_y = load_data('packages/datasets/images/train', image_height, image_width, image_channel, num_classes)
-    test_x, test_y = load_data('packages/datasets/images/validation', image_height, image_width, image_channel, num_classes)
+    train_x, train_y = load_data(
+        'packages/datasets/images/train', image_height, image_width, image_channel, num_classes)
+    test_x, test_y = load_data('packages/datasets/images/validation',
+                               image_height, image_width, image_channel, num_classes)
     return train_x, train_y, test_x, test_y
 
-def train(train_x, train_y, test_x, test_y): 
-    model = mobilenet_v3_small(
+
+def train(train_x, train_y, test_x, test_y):
+    model = mobilenet_v3_large(
         input_shape=(image_height, image_width, image_channel),
         num_classes=num_classes,
         include_top=True
@@ -30,27 +30,26 @@ def train(train_x, train_y, test_x, test_y):
     model.summary()
 
     model.compile(
-        optimizer=tf.keras.optimizers.Adam(0.000005),
+        optimizer=tf.keras.optimizers.Adam(0.0005),
         loss=tf.keras.losses.CategoricalCrossentropy(),
         metrics=['accuracy'],
-        loss=[losses.categorical_crossentropy, losses.mean_squared_error],
-        loss_weights=[1., 0.5]
     )
 
-    histtory = model.fit(
+    history = model.fit(
         train_x,
         train_y,
         batch_size=batch_size,
         verbose=1,
         epochs=epochs,
         validation_data=(test_x, test_y),
-        callbacks=[tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=30, restore_best_weights=True)]
+        callbacks=[tf.keras.callbacks.EarlyStopping(
+            monitor='val_loss', patience=patience, restore_best_weights=True)]
     )
 
-    return model, histtory
+    return model, history
 
 
-def draw_loss (history):
+def draw_loss(history):
     # 提取训练和验证损失的历史记录
     training_loss = history.history['loss']
     validation_loss = history.history['val_loss']
@@ -65,15 +64,20 @@ def draw_loss (history):
     plt.legend()
     plt.title('Training and Validation Loss Over Epochs')
     plt.grid(True)
-    plt.savefig('packages/solutions/python-server/loss.png')
+    plt.savefig('packages/solutions/python-server/losses/loss_{}.png'.format(
+        history.history['val_accuracy'][-1]))
 
     plt.show()
+
 
 def main():
     train_x, train_y, test_x, test_y = load()
     model, history = train(train_x, train_y, test_x, test_y)
-    model.save('./packages/solutions/python-server/MobileNetV3.keras')
+    print(history)
+    model.save('./packages/solutions/python-server/models/MobileNetV3_{}.keras'.format(
+        history.history['val_accuracy'][-1]))
     draw_loss(history)
+
 
 if __name__ == '__main__':
     main()
