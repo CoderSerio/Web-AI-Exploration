@@ -62,6 +62,14 @@ const bffLauncher = new ProjectLauncher(
   "run start"
 );
 
+const pythonServerLauncher = new ProjectLauncher(
+  "Python Server",
+  "../packages/solutions/python-server",
+  "python",
+  "server.py"
+);
+
 envServerLauncher.start();
 feLauncher.start();
 bffLauncher.start();
+pythonServerLauncher.start();

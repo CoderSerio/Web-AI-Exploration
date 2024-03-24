@@ -1,10 +1,10 @@
 import tensorflow as tf
-from model import mobilenet_v3_large, mobilenet_v3_small
+from model import mobilenet_v3_large
 from utils import load_data
 import matplotlib.pyplot as plt
 
-image_height = 48
-image_width = 48
+image_height = 96
+image_width = 96
 image_channel = 3
 batch_size = 100
 epochs = 100

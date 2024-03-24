@@ -60,7 +60,7 @@ def format_data_from_frontend(base64_uri):
     image = np.frombuffer(image_data, np.uint8)
     # 使用OpenCV解码图像
     nd_image = cv2.imdecode(image, cv2.IMREAD_COLOR)
-    nd_image.reshape(48, 48, 3)
+    nd_image.reshape(96, 96, 3)
     nd_array = np.array([nd_image / 255.0])
 
     return nd_array

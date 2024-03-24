@@ -7,19 +7,15 @@ from utils import format_data_from_frontend, predict
 import tensorflow as tf
 
 
-with open('env-configs.json', 'r') as file:
-    json_data = json.load(file)
-    print(json_data)
-
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 socketio = SocketIO(app)
 model = tf.keras.models.load_model(
-    'packages/solutions/python-server/MobileNetV3.keras'
+    './models/MobileNetV3_0.6597937941551208.keras'
 )
 
 
-@socketio.on(json_data['socket-keys']['solution-python-server'])
+@socketio.on('python-server-message')
 def handle_message(data):
     nd_array = format_data_from_frontend(data['content'])
     res = predict(model, nd_array).tolist()
@@ -31,6 +27,7 @@ def handle_message(data):
 if __name__ == '__main__':
     socketio.run(
         app,
-        host=json_data['ip'],
-        port=json_data['ports']['solution-python-server']
+        host='127.0.0.1',
+        port='8820',
+        allow_unsafe_werkzeug=True
     )

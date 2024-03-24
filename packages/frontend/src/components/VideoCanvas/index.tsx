@@ -7,6 +7,7 @@ interface VideoCanvasProps {
   socketRef: MutableRefObject<Socket>
 }
 
+const size = 96
 const VideoCanvas = ({ socketRef }: VideoCanvasProps) => {
   const testDataRef = useRef<Array<number>>([])
   const canvasForCaptureRef = useRef<HTMLCanvasElement>(null)
@@ -57,15 +58,15 @@ const VideoCanvas = ({ socketRef }: VideoCanvasProps) => {
 
           const { width, height, x, y } = face.detection.box as any
           let scale;
-          if (width / height >= 48 / 48) {
-            scale = 48 / width;
+          if (width / height >= 1) {
+            scale = size / width;
           } else {
-            scale = 48 / height;
+            scale = size / height;
           }
           const scaledWidth = width * scale;
           const scaledHeight = height * scale;
-          const offsetX = (48 - scaledWidth) / 2;
-          const offsetY = (48 - scaledHeight) / 2;
+          const offsetX = (size - scaledWidth) / 2;
+          const offsetY = (size - scaledHeight) / 2;
 
           const canvas = canvasForResizedCaptureRef.current as HTMLCanvasElement
           const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
@@ -88,7 +89,7 @@ const VideoCanvas = ({ socketRef }: VideoCanvasProps) => {
     timer = setInterval(() => {
       const frameData = getSingleFrame()
       updateFaceMark(frameData as string)
-    }, 1000)
+    }, 500)
 
     return () => {
       clearInterval(timer)
@@ -99,7 +100,7 @@ const VideoCanvas = ({ socketRef }: VideoCanvasProps) => {
     <div className={styles.wrapper}>
       <video ref={videoRef} autoPlay></video>
       <canvas width={640} height={480} ref={canvasForCaptureRef}></canvas>
-      <canvas width={48} height={48} ref={canvasForResizedCaptureRef} style={{ scale: 3 }}></canvas>
+      <canvas width={size} height={size} ref={canvasForResizedCaptureRef} style={{ scale: 3 }}></canvas>
     </div>
   )
 }
