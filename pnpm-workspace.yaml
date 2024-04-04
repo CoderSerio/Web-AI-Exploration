@@ -1,3 +1,4 @@
 packages:
   - 'packages/fontend'
   - 'packages/bff'
+  - 'packages/solutions/**'
