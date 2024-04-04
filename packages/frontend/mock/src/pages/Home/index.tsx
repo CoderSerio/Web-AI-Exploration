@@ -1,9 +1,9 @@
 import { PageContainer } from '@ant-design/pro-components';
 // import { useModel } from '@umijs/max';
-import { createVideoStreamWebSocketConnection } from '@/apis/index';
+import { createVideoStreamWebSocketConnection } from 'mock/src/apis/index';
 import { useLayoutEffect, useRef, useState } from 'react';
 import styles from './index.less';
-import VideoCanvas from '@/components/VideoCanvas';
+import VideoCanvas from 'mock/src/components/VideoCanvas';
 import { Socket } from 'socket.io-client';
 
 const enum2expression = [

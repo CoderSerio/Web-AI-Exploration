@@ -1,4 +1,4 @@
-import services from '@/services/demo';
+import services from 'mock/src/services/demo';
 import {
   ActionType,
   FooterToolbar,

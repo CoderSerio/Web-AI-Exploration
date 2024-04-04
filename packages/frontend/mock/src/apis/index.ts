@@ -1,4 +1,4 @@
-import { initWebSocket } from '@/utils/request';
+import { initWebSocket } from 'mock/src/utils/request';
 import { Socket } from 'socket.io-client';
 
 const baseUrl = 'http://localhost:8811';
