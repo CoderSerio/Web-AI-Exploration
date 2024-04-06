@@ -51,7 +51,7 @@ const envServerLauncher = new ProjectLauncher(
 );
 const feLauncher = new ProjectLauncher(
   "前端",
-  "../packages/frontend",
+  "../packages/fe",
   "npm",
   "run dev"
 );
