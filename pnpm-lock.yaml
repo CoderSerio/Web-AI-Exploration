@@ -123,6 +123,9 @@ importers:
         specifier: ^4.7.5
         version: 4.7.5
     devDependencies:
+      '@trickle/lec3d':
+        specifier: ^0.0.6
+        version: 0.0.6(three@0.157.0)
       '@types/less':
         specifier: ^3.0.6
         version: 3.0.6
@@ -153,9 +156,6 @@ importers:
       less:
         specifier: ^4.2.0
         version: 4.2.0
-      less-loader:
-        specifier: ^12.2.0
-        version: 12.2.0(less@4.2.0)
       typescript:
         specifier: ^5.2.2
         version: 5.2.2
@@ -1639,6 +1639,14 @@ packages:
       - encoding
       - seedrandom
     dev: false
+
+  /@trickle/lec3d@0.0.6(three@0.157.0):
+    resolution: {integrity: sha512-e6jYht7ReyL6ZQiEeftAhqq0IeCuOlfxXi1YuhNRjjY46G0KOb6GG/eVyrElxhCZ1LeXAtR+UP+Ya6mTeAPJBw==}
+    peerDependencies:
+      three: ^0.157.0
+    dependencies:
+      three: 0.157.0
+    dev: true
 
   /@tsconfig/node10@1.0.9:
     resolution: {integrity: sha512-jNsYVVxU8v5g43Erja32laIDHXeoNvFEpX33OK4d6hljo3jDhCBDhx5dhCCTMWUojscpAagGiRkBKxpdl9fxqA==}
@@ -4878,22 +4886,6 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
-  /less-loader@12.2.0(less@4.2.0):
-    resolution: {integrity: sha512-MYUxjSQSBUQmowc0l5nPieOYwMzGPUaTzB6inNW/bdPEG9zOL3eAAD1Qw5ZxSPk7we5dMojHwNODYMV1hq4EVg==}
-    engines: {node: '>= 18.12.0'}
-    peerDependencies:
-      '@rspack/core': 0.x || 1.x
-      less: ^3.5.0 || ^4.0.0
-      webpack: ^5.0.0
-    peerDependenciesMeta:
-      '@rspack/core':
-        optional: true
-      webpack:
-        optional: true
-    dependencies:
-      less: 4.2.0
-    dev: true
-
   /less@4.2.0:
     resolution: {integrity: sha512-P3b3HJDBtSzsXUl0im2L7gTO5Ubg8mEN6G8qoTS77iXxXX4Hvu4Qj540PZDvQ8V6DmX6iXo98k7Md0Cm1PrLaA==}
     engines: {node: '>=6'}
@@ -6325,6 +6317,10 @@ packages:
 
   /text-table@0.2.0:
     resolution: {integrity: sha512-N+8UisAXDGk8PFXP4HAzVR9nbfmVJ3zYLAWiTIoqC5v5isinhr+r5uaO8+7r3BMfuNIufIsA7RdpVgacC2cSpw==}
+    dev: true
+
+  /three@0.157.0:
+    resolution: {integrity: sha512-CeAwQrf4x3z0/e+MC4F+nXLW5t0gh3pw+L6CCBqpHvOq3bGYIgRYub7Pv0j/9wR+d++OiEglyZzWyuSYbwWGOA==}
     dev: true
 
   /through@2.3.8:
