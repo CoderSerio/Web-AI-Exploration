@@ -1,18 +1,22 @@
 import { useEffect, useLayoutEffect, useRef } from 'react'
 import styles from './index.module.css'
 import { init, start } from './utils'
+import VideoCardUnit from '../VideoCardUnit'
 
 const Scene = () => {
   const containerRef = useRef<HTMLDivElement>(null)
   const lecRef = useRef<any>(null)
+  const css3dRef = useRef<any>(null)
 
   useEffect(() => {
-    lecRef.current = init()
+    const { lec, css3d } = init()
+    lecRef.current = lec
+    css3dRef.current = css3d
   }, []);
 
   useLayoutEffect(() => {
-    if (lecRef.current && containerRef.current) {
-      start(lecRef.current, containerRef.current)
+    if (lecRef.current && css3dRef.current && containerRef.current) {
+      start(lecRef.current, css3dRef.current, containerRef.current, <VideoCardUnit></VideoCardUnit>)
     }
   }, [])
 
