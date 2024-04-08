@@ -39,12 +39,20 @@ export const loadModels = async (lec: any) => {
     },
   });
 
-  const { model: fox } = await lec3d.loadGLTF({
-    modelPath: "3d/fox/scene.gltf",
+  const { gltf, model: fox } = await lec3d.loadGLTF({
+    modelPath: "3d/fox/untitled.glb",
     options: {
       scale: 200,
     },
   });
+
+  // const { model: fox } = await lec3d.loadFBX({
+  //   modelPath: "3d/vrchat-fox/source/ref sheet.fbx",
+  // });
+  console.log("fox", gltf, fox);
+  setTimeout(() => {
+    console.log("fox2", fox, fox.animations);
+  }, 1000);
 
   lec.scene.add(land);
   lec.scene.add(fox);
