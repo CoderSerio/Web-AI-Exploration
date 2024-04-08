@@ -13,13 +13,15 @@
     "@vladmandic/face-api": "^1.7.13",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "socket.io-client": "^4.7.5"
+    "socket.io-client": "^4.7.5",
+    "three": "^0.163.0"
   },
   "devDependencies": {
-    "@trickle/lec3d": "^0.0.6",
+    "@trickle/lec3d": "^0.0.8",
     "@types/less": "^3.0.6",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
+    "@types/three": "^0.163.0",
     "@typescript-eslint/eslint-plugin": "^7.2.0",
     "@typescript-eslint/parser": "^7.2.0",
     "@vitejs/plugin-react": "^4.2.1",

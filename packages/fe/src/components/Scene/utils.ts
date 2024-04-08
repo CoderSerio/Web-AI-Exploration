@@ -1,6 +1,13 @@
 import lec3d from "@trickle/lec3d";
 import ReactDOM from "react-dom/client";
 import { ReactElement } from "react";
+import { AnimationMixer, Raycaster, Vector2, Vector3 } from "three";
+
+const config = {
+  moveSpeed: 10,
+  jumpHeight: 50,
+  animationSpeed: 0.02,
+};
 
 export const init = () => {
   const lec = lec3d.init({
@@ -22,50 +29,120 @@ export const init = () => {
     camera: lec.camera,
   });
 
-  lec.addControls();
+  const controls = lec.addControls();
+
   lec.renderer.setPixelRatio(window.devicePixelRatio);
-  lec.camera.position.x = 0;
-  lec.camera.position.y = 2000;
-  lec.camera.position.z = 1800;
+  lec.camera.position.x = 1000;
+  lec.camera.position.y = 300;
+  lec.camera.position.z = 1000;
   lec.camera.lookAt(0, 10, 0);
-  return { lec, css3d };
+  return { lec, css3d, controls };
 };
 
 export const loadModels = async (lec: any) => {
   const { model: land } = await lec3d.loadGLTF({
     modelPath: "3d/island/scene.gltf",
     options: {
-      scale: 4,
+      scale: 2,
     },
   });
 
   const { gltf, model: fox } = await lec3d.loadGLTF({
-    modelPath: "3d/fox/untitled.glb",
+    modelPath: "3d/fox/fox.glb",
     options: {
       scale: 200,
     },
   });
 
-  // const { model: fox } = await lec3d.loadFBX({
-  //   modelPath: "3d/vrchat-fox/source/ref sheet.fbx",
-  // });
-  console.log("fox", gltf, fox);
-  setTimeout(() => {
-    console.log("fox2", fox, fox.animations);
-  }, 1000);
-
   lec.scene.add(land);
   lec.scene.add(fox);
+
+  return gltf;
 };
 
 export const mixElement = (lec: any, css3d: any, jsx: ReactElement) => {
   const div = document.createElement("div");
-  // div.innerHTML =
-  //   '<div style="width: 800px; height: 800px;">Hi: <input /></div>';
   ReactDOM.createRoot(div).render(jsx);
   const css3dObj = css3d.createCss3dObject({ element: div });
   css3dObj.position.y = 1000;
   lec.scene.add(css3dObj);
+};
+
+export const controlModel = (wrappedModel: any, lec: any) => {
+  const activeKeys = {
+    W: false,
+    A: false,
+    S: false,
+    D: false,
+    " ": false,
+  };
+
+  const mixer = new AnimationMixer(wrappedModel.scene);
+  const action = mixer.clipAction(wrappedModel.animations[0]);
+  action.clampWhenFinished = false; // 不要在动画结束时立即停止
+  action.timeScale = 1;
+
+  const playAnimation = () => {
+    if (!action.paused) {
+      action.play();
+    }
+    mixer.update(config.animationSpeed);
+    requestAnimationFrame(playAnimation);
+  };
+  playAnimation();
+
+  //
+
+  const handleKeyPress = (e: KeyboardEvent) => {
+    const key = e.key.toUpperCase() as keyof typeof activeKeys;
+    const model = wrappedModel.scene;
+    activeKeys[key] = true;
+    console.log("res", wrappedModel, lec.camera.position);
+
+    const moveVector = new Vector3();
+    moveVector.y = 0;
+
+    // 以 Z轴负方向 为正前方
+    if (activeKeys["W"]) {
+      moveVector.z = -config.moveSpeed;
+    }
+    if (activeKeys["S"]) {
+      moveVector.z = config.moveSpeed;
+    }
+    if (activeKeys["A"]) {
+      moveVector.x = -config.moveSpeed;
+    }
+    if (activeKeys["D"]) {
+      moveVector.x = config.moveSpeed;
+    }
+    if (activeKeys[" "]) {
+    }
+
+    model.position.add(moveVector);
+    const lookAtVector = new Vector3().copy(moveVector).multiplyScalar(1000);
+    lec.camera.position.add(moveVector);
+    lec.camera.lookAt(lookAtVector);
+    model.lookAt(lookAtVector);
+  };
+
+  const handleKeyUp = (e: KeyboardEvent) => {
+    const key = e.key.toUpperCase() as keyof typeof activeKeys;
+    activeKeys[key] = false;
+  };
+
+  window.addEventListener("keypress", handleKeyPress);
+  window.addEventListener("keyup", handleKeyUp);
+
+  const unloadControl = () => {};
+
+  return {
+    keypress: [unloadControl],
+    keyup: [handleKeyUp],
+  };
+};
+
+const focus = (lec: any, model: any, controls: any) => {
+  controls.target = model.position.clone();
 };
 
 export const mount = (obj: any, element: HTMLElement) => {
@@ -75,11 +152,16 @@ export const mount = (obj: any, element: HTMLElement) => {
 export const start = async (
   lec: any,
   css3d: any,
+  controls: any,
   element: HTMLElement,
   videoCanvas: ReactElement
 ) => {
-  await loadModels(lec);
+  const keyGLTF = await loadModels(lec);
   mixElement(lec, css3d, videoCanvas);
   mount(lec, element);
+  const unloadEventHandlers = controlModel(keyGLTF, lec);
+  focus(lec, keyGLTF.scene, controls);
   mount(css3d, element);
+
+  return unloadEventHandlers;
 };

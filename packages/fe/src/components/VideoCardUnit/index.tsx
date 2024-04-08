@@ -19,7 +19,6 @@ const VideoCardUnit: React.FC = () => {
   useLayoutEffect(() => {
     socketRef.current = createVideoStreamWebSocketConnection({
       handleMessage: (data) => {
-        console.log('前端收到了数据', data)
         setPredictions(data.content)
       }
     })

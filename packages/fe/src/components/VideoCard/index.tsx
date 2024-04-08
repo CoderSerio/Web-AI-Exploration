@@ -88,7 +88,7 @@ const VideoCanvas = ({ socketRef }: VideoCanvasProps) => {
     timer = setInterval(() => {
       const frameData = getSingleFrame()
       updateFaceMark(frameData as string)
-    }, 500)
+    }, 1000)
 
     return () => {
       clearInterval(timer)
