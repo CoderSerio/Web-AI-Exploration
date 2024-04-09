@@ -1,0 +1,8 @@
+Model Information:
+* title:	Planet Collection
+* source:	https://sketchfab.com/3d-models/planet-collection-d0838dea632f447183bc664e83d5f918
+* author:	inoii (https://sketchfab.com/inoii)
+
+Model License:
+* license type:	SKETCHFAB Standard (https://sketchfab.com/licenses)
+* requirements:	Under basic restrictions, use worldwide, on all types of media, commercially or not, and in all types of derivative works

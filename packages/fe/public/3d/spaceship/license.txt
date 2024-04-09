@@ -1,0 +1,11 @@
+Model Information:
+* title:	Star Wars Hangar interior model
+* source:	https://sketchfab.com/3d-models/star-wars-hangar-interior-model-841205af630444da911fa7a2e8541a16
+* author:	Aditya Graphical (https://sketchfab.com/Adityakm)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Star Wars Hangar interior model" (https://sketchfab.com/3d-models/star-wars-hangar-interior-model-841205af630444da911fa7a2e8541a16) by Aditya Graphical (https://sketchfab.com/Adityakm) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
