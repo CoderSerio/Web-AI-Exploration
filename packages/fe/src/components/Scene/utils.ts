@@ -1,27 +1,41 @@
-import { PythonServiceSocketGateway } from "./../../../../bff/src/module/web-socket/python-service-socket.gateway";
-import { SUCCESS } from "./../../../../bff/src/common/return-code";
 import lec3d from "@trickle/lec3d";
 import ReactDOM from "react-dom/client";
 import { ReactElement } from "react";
+import * as CANNON from "cannon-es";
+
 import {
   AnimationMixer,
   LinearFilter,
-  Raycaster,
   TextureLoader,
-  Vector2,
   Vector3,
+  Object3D,
 } from "three";
 
 const config = {
-  offset: 200,
+  offset: 240,
   sizeUnit: 100,
   moveSpeed: 5 * 10,
-  jumpMaxHeight: 40 * 15,
+  jumpMaxHeight: 40 * 18,
   animationSpeed: 0.01,
   jumpStatus: "STABLE", // 'STABLE' | 'UP' | 'DOWN',
+  cameraPositions: [
+    new Vector3(0, 0, 0),
+    { x: -1788.5344006480404, y: 394.4747315215935, z: -1676.049381644657 },
+  ],
+  currentCameraPositionIndex: 0,
 };
 
 export const init = () => {
+  const world = new CANNON.World();
+  world.gravity.set(0, -9.8, 0); //单位：m/s²
+  const bodyShape = new CANNON.Sphere(100000 * config.sizeUnit);
+  const body = new CANNON.Body({
+    mass: 0.3,
+    position: new CANNON.Vec3(0, 100, 0),
+    shape: bodyShape, //碰撞体的几何体形状
+  });
+  world.addBody(body);
+
   const lec = lec3d.init({
     axesHelperConfigs: {
       length: config.sizeUnit,
@@ -42,20 +56,20 @@ export const init = () => {
 
   const textureLoader = new TextureLoader();
   textureLoader.load("pics/universe_texture.jpg", (texture) => {
-    console.log();
     texture.minFilter = LinearFilter;
     lec.scene.background = texture;
   });
 
-  const controls = lec.addControls({ enable: false });
+  // TODO: controls的几个选项要禁用掉
+  // TODO: 设置可以动态配置的旋转中心
+  const controls = lec.addControls({});
+  controls.enableZoom = false;
+  controls.enablePan = false;
 
   lec.renderer.setPixelRatio(window.devicePixelRatio);
   lec.camera.far = 300 * config.sizeUnit;
-  lec.camera.position.x = 0.4 * config.sizeUnit;
-  lec.camera.position.y = 0.4 * config.sizeUnit;
-  lec.camera.position.z = 0.4 * config.sizeUnit;
+  lec.camera.position.copy(config.cameraPositions[1]);
   lec.camera.updateProjectionMatrix();
-  lec.camera.lookAt(0, 10, 0);
   return { lec, css3d, controls };
 };
 
@@ -80,7 +94,7 @@ export const loadModels = async (lec: any) => {
         x: 50 * config.offset + 10 * config.sizeUnit,
       },
       rotation: {
-        y: lec3d.transferRotationValue(90),
+        y: lec3d.transferRotationValue(120),
       },
     },
   });
@@ -201,8 +215,19 @@ export const controlModel = (wrappedModel: any, lec: any) => {
   };
 
   const handleKeyUp = (e: KeyboardEvent) => {
-    const key = e.key.toUpperCase() as keyof typeof activeKeys;
-    activeKeys[key] = false;
+    const key = e.key.toUpperCase();
+    activeKeys[key as keyof typeof activeKeys] = false;
+    if (key === "C") {
+      console.log("camera", lec.camera.position);
+      console.log("character", lec.camera.position);
+    } else if (key === "R") {
+      const len = config.cameraPositions.length;
+      config.currentCameraPositionIndex =
+        (config.currentCameraPositionIndex + 1) % len;
+      lec.camera.position.copy(
+        config.cameraPositions[config.currentCameraPositionIndex]
+      );
+    }
   };
 
   const checkMove2 = () => {
@@ -216,7 +241,6 @@ export const controlModel = (wrappedModel: any, lec: any) => {
     baseMoveVector.y = 0;
     const moveVector = new Vector3(0, 0, 0);
 
-    // TODO: 这样写不完全对，应该创建多个向量来叠加
     if (activeKeys["W"]) {
       moveVector.add(baseMoveVector.clone().multiplyScalar(1));
     }
@@ -263,19 +287,28 @@ export const controlModel = (wrappedModel: any, lec: any) => {
       }
       action.paused = false;
       model.position.add(moveVector);
-      lec.camera.position.add(moveVector.multiplyScalar(1));
+      if (config.currentCameraPositionIndex === 0) {
+        lec.camera.position.add(moveVector.multiplyScalar(1));
+      }
+
       const lookAtVector = new Vector3()
         .copy(moveVector)
         .multiplyScalar(100 * config.sizeUnit);
       model.lookAt(lookAtVector);
-      lec.camera.lookAt(model.position);
+      const cameraLookAtVector = new Vector3().copy(model.position);
+      cameraLookAtVector.y = 4 * config.sizeUnit;
+      lec.camera.lookAt(cameraLookAtVector);
     } else {
       action.reset();
       action.paused = true;
     }
-    // lec.camera.position.add(moveVector);
+
+    config.cameraPositions[0].x = model.position.x;
+    config.cameraPositions[0].y = model.position.y + 8 * config.sizeUnit;
+    config.cameraPositions[0].z = model.position.z - 6 * config.sizeUnit;
+    lec.camera.lookAt(model.position);
+
     requestAnimationFrame(checkMove2);
-    // follow(wrappedModel.scene, lec.camera);
   };
   checkMove2();
 
@@ -290,9 +323,17 @@ export const controlModel = (wrappedModel: any, lec: any) => {
   };
 };
 
-const focus = (lec: any, model: any, controls: any) => {
+const focus = (lec: any, model: any, Controls: any) => {
   lec.camera.lookAt(model.position);
-  controls.target = model.position.clone();
+
+  // Controls.target = model.position.clone();
+  const controls = new Controls();
+
+  const update = () => {
+    controls.update(model.position);
+    requestAnimationFrame(update);
+  };
+  update();
 };
 
 export const mount = (obj: any, element: HTMLElement) => {
@@ -302,7 +343,7 @@ export const mount = (obj: any, element: HTMLElement) => {
 export const start = async (
   lec: any,
   css3d: any,
-  controls: any,
+  Controls: any,
   element: HTMLElement,
   videoCanvas: ReactElement
 ) => {
@@ -310,8 +351,12 @@ export const start = async (
   // mixElement(lec, css3d, videoCanvas);
   mount(lec, element);
   const unloadEventHandlers = controlModel(keyGLTF, lec);
-  focus(lec, keyGLTF.scene, controls);
+  focus(lec, keyGLTF.scene, Controls);
   mount(css3d, element);
+
+  const update = () => {
+    requestAnimationFrame(update);
+  };
 
   return unloadEventHandlers;
 };

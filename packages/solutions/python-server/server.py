@@ -15,6 +15,11 @@ model = tf.keras.models.load_model(
 )
 
 
+@app.route('/')
+def hello_world():
+    return 'Hello, World!'
+
+
 @socketio.on('python-server-message')
 def handle_message(data):
     nd_array = format_data_from_frontend(data['content'])
