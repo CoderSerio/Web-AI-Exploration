@@ -1,0 +1,53 @@
+{
+    "os": "Windows-10-10.0.22631-SP0",
+    "python": "3.11.5",
+    "heartbeatAt": "2024-04-14T07:28:48.617872",
+    "startedAt": "2024-04-14T07:28:44.765846",
+    "docker": null,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "d:\\code\\fe\\programs\\masterpiece\\packages\\solutions\\python-server\\trainer.py",
+    "codePathLocal": "packages\\solutions\\python-server\\trainer.py",
+    "codePath": "packages\\solutions\\python-server\\trainer.py",
+    "git": {
+        "remote": "git@github.com:CoderSerio/Web-AI-Masterpiece.git",
+        "commit": "20df94d398eec6e508d47cafe6af4762a7e6b7bd"
+    },
+    "email": "2779066456@qq.com",
+    "root": "D:/code/fe/programs/masterpiece",
+    "host": "meat-chicken-001",
+    "username": "Serio",
+    "executable": "D:\\code_env\\anaconda\\python.exe",
+    "cpu_count": 8,
+    "cpu_count_logical": 16,
+    "cpu_freq": {
+        "current": 2304.0,
+        "min": 0.0,
+        "max": 2304.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 2304.0,
+            "min": 0.0,
+            "max": 2304.0
+        }
+    ],
+    "disk": {
+        "/": {
+            "total": 488.28124618530273,
+            "used": 210.58996963500977
+        }
+    },
+    "gpu": "NVIDIA GeForce RTX 3080 Laptop GPU",
+    "gpu_count": 1,
+    "gpu_devices": [
+        {
+            "name": "NVIDIA GeForce RTX 3080 Laptop GPU",
+            "memory_total": 8589934592
+        }
+    ],
+    "memory": {
+        "total": 15.774463653564453
+    }
+}

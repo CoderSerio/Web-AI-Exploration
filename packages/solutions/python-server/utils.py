@@ -13,11 +13,13 @@ import base64
 import cv2
 import re
 
+image_height = 98
+image_width = 128
 
-expression_2_number = ['angry', 'disgust',
+number_2_expression = ['angry', 'disgust',
                        'fear', 'happy', 'neutral', 'sad', 'surprise']
-number_2_expression = {expression: index for index,
-                       expression in enumerate(expression_2_number)}
+expression_2_number = {expression: index for index,
+                       expression in enumerate(number_2_expression)}
 
 
 def load_data(folder_path, height, weight, channel, class_num):
@@ -25,17 +27,23 @@ def load_data(folder_path, height, weight, channel, class_num):
     labels = []
 
     for label_name in os.listdir(folder_path):
-        label_folder_path = os.path.join(folder_path, label_name)
-        for image_name in os.listdir(label_folder_path):
-            image_path = os.path.join(label_folder_path, image_name)
-            image = Image.open(image_path).convert('RGB')
-            resized_image = image.resize(
-                (height, weight), Image.Resampling.LANCZOS)
-            image_nd_array = np.array(resized_image) / 255
-            formatted_image = image_nd_array.reshape((height, weight, channel))
+        label_next_folder = os.path.join(folder_path, label_name)
 
-            labels.append(number_2_expression[label_name])
-            images.append(formatted_image)
+        for label_next_folder_name in os.listdir(label_next_folder):
+            label_folder_path = os.path.join(
+                label_next_folder, label_next_folder_name)
+            for image_name in os.listdir(label_folder_path):
+                image_path = os.path.join(label_folder_path, image_name)
+                image = Image.open(image_path).convert('RGB')
+                resized_image = image.resize(
+                    (height, weight), Image.Resampling.LANCZOS)
+                image_nd_array = np.array(resized_image) / 255
+                formatted_image = image_nd_array.reshape(
+                    (height, weight, channel))
+
+                label_key = int(label_name) - 1
+                labels.append(label_key)
+                images.append(formatted_image)
 
     nd_array_images = np.array(images)
     nd_array_labels = np.array(labels)
@@ -60,7 +68,7 @@ def format_data_from_frontend(base64_uri):
     image = np.frombuffer(image_data, np.uint8)
     # 使用OpenCV解码图像
     nd_image = cv2.imdecode(image, cv2.IMREAD_COLOR)
-    nd_image.reshape(96, 96, 3)
+    nd_image.reshape(image_height, image_width, 3)
     nd_array = np.array([nd_image / 255.0])
 
     return nd_array

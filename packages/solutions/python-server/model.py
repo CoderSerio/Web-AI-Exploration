@@ -142,7 +142,7 @@ def _inverted_res_block(x,
                                use_bias=False,
                                name=prefix + 'depthwise')(x)
     x = bn(name=prefix + 'depthwise-BatchNorm')(x)
-    x = layers.Dropout(0.2, name=prefix + 'project-Dropout')(x)
+    # x = layers.Dropout(0.2, name=prefix + 'project-Dropout')(x)
     x = act(name=prefix + 'depthwise-' + act.__name__)(x)
 
     if use_se:
@@ -218,8 +218,7 @@ def mobilenet_v3_large(input_shape=(224, 224, 3),
                           kernel_size=1,
                           padding='same',
                           name="Conv_2",
-
-                          kernel_regularizer=tf.keras.regularizers.l2(0.01)
+                          #   kernel_regularizer=tf.keras.regularizers.l2(0.01)
                           )(x)
         x = HardSwish(name="Conv_2-HardSwish")(x)
 
@@ -228,7 +227,7 @@ def mobilenet_v3_large(input_shape=(224, 224, 3),
                           kernel_size=1,
                           padding='same',
                           name='Logits-Conv2d_1c_1x1',
-                          kernel_regularizer=tf.keras.regularizers.l2(0.01)
+                          #   kernel_regularizer=tf.keras.regularizers.l2(0.01)
                           )(x)
         x = layers.Flatten()(x)
         x = layers.Softmax(name="Predictions")(x)

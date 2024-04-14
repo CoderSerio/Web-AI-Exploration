@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@douyinfe/semi-ui": "^2.56.0",
+    "@tweenjs/tween.js": "^23.1.1",
     "@vladmandic/face-api": "^1.7.13",
     "cannon-es": "^0.20.0",
     "react": "^18.2.0",

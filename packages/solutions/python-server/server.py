@@ -6,12 +6,11 @@ import json
 from utils import format_data_from_frontend, predict
 import tensorflow as tf
 
-
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 socketio = SocketIO(app)
 model = tf.keras.models.load_model(
-    './models/MobileNetV3_0.6597937941551208.keras'
+    './models/MobileNetV3_0.9668367505073547.keras'
 )
 
 
@@ -25,8 +24,10 @@ def handle_message(data):
     nd_array = format_data_from_frontend(data['content'])
     res = predict(model, nd_array).tolist()
     print(f"从 BFF 获取到了数据, 预测结果是: {res}\n")
-    emit('python-server-message',
-         {'id': 'server', 'content': res}, broadcast=False)
+    emit(
+        'python-server-message',
+        {'id': 'server', 'content': res}, broadcast=False
+    )
 
 
 if __name__ == '__main__':

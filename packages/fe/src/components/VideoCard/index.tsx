@@ -7,7 +7,7 @@ interface VideoCanvasProps {
   socketRef: MutableRefObject<Socket>
 }
 
-const size = 96
+const sizeHeight = 98, sizeWidth = 128, time = 500
 const VideoCanvas = ({ socketRef }: VideoCanvasProps) => {
   const canvasForCaptureRef = useRef<HTMLCanvasElement>(null)
   const canvasForResizedCaptureRef = useRef<HTMLCanvasElement>(null)
@@ -58,21 +58,21 @@ const VideoCanvas = ({ socketRef }: VideoCanvasProps) => {
           const { width, height, x, y } = face.detection.box as any
           let scale;
           if (width / height >= 1) {
-            scale = size / width;
+            scale = sizeWidth / width;
           } else {
-            scale = size / height;
+            scale = sizeHeight / height;
           }
           const scaledWidth = width * scale;
           const scaledHeight = height * scale;
-          const offsetX = (size - scaledWidth) / 2;
-          const offsetY = (size - scaledHeight) / 2;
+          const offsetX = (sizeWidth - scaledWidth) / 2;
+          const offsetY = (sizeHeight - scaledHeight) / 2;
 
           const canvas = canvasForResizedCaptureRef.current as HTMLCanvasElement
           const ctx = canvas.getContext('2d') as CanvasRenderingContext2D
           ctx?.drawImage(
             image, x, y, width, height, offsetX, offsetY, scaledWidth, scaledHeight
           )
-          const frameData = canvas.toDataURL('image/jpeg', 0.8)
+          const frameData = canvas.toDataURL('image/jpeg', 1)
           socketRef.current.emit('backend-for-frontend-message', { id: 'frontend', content: frameData })
         })
         faceApi.draw.drawDetections(canvasForCaptureRef.current, faces)
@@ -88,7 +88,7 @@ const VideoCanvas = ({ socketRef }: VideoCanvasProps) => {
     timer = setInterval(() => {
       const frameData = getSingleFrame()
       updateFaceMark(frameData as string)
-    }, 1000)
+    }, time)
 
     return () => {
       clearInterval(timer)
@@ -97,9 +97,14 @@ const VideoCanvas = ({ socketRef }: VideoCanvasProps) => {
 
   return (
     <div>
-      <video ref={videoRef} autoPlay></video>
-      <canvas width={640} height={480} ref={canvasForCaptureRef}></canvas>
-      <canvas width={size} height={size} ref={canvasForResizedCaptureRef} style={{ scale: 3 }}></canvas>
+      <canvas width={sizeWidth} height={sizeHeight} ref={canvasForResizedCaptureRef} style={{
+        width: sizeWidth,
+        height: sizeHeight,
+      }}></canvas>
+      <div>
+        <video ref={videoRef} autoPlay></video>
+        <canvas width={640} height={480} ref={canvasForCaptureRef}></canvas>
+      </div>
     </div>
   )
 }

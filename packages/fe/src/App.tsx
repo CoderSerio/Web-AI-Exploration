@@ -6,14 +6,14 @@ import VideoCardUnit from './components/VideoCardUnit'
 import Scene from './components/Scene'
 
 function App() {
-  const [count, setCount] = useState(0)
 
+  const [isWaiting, setIsWaiting] = useState(true)
   return (
-    <>
-
+    <div style={{ background: '#000' }}>
       {/* <VideoCardUnit></VideoCardUnit> */}
-      <Scene></Scene>
-    </>
+      <Scene setIsWaiting={() => setIsWaiting(false)}></Scene>
+      {!isWaiting && <VideoCardUnit></VideoCardUnit>}
+    </div>
   )
 }
 

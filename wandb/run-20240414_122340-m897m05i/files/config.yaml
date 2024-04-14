@@ -1,0 +1,57 @@
+wandb_version: 1
+
+image_height:
+  desc: null
+  value: 98
+image_width:
+  desc: null
+  value: 128
+image_channel:
+  desc: null
+  value: 3
+batch_size:
+  desc: null
+  value: 100
+epochs:
+  desc: null
+  value: 100
+patience:
+  desc: null
+  value: 5
+num_classes:
+  desc: null
+  value: 7
+_wandb:
+  desc: null
+  value:
+    python_version: 3.11.5
+    cli_version: 0.16.6
+    framework: keras
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    start_time: 1713068620.0
+    t:
+      1:
+      - 2
+      - 3
+      - 5
+      - 53
+      - 55
+      - 105
+      2:
+      - 2
+      - 3
+      - 5
+      - 53
+      - 55
+      - 105
+      3:
+      - 13
+      - 16
+      - 23
+      4: 3.11.5
+      5: 0.16.6
+      8:
+      - 3
+      - 5
+      13: windows-amd64

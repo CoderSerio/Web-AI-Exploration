@@ -3,21 +3,22 @@ import styles from './index.module.css'
 import { init, start } from './utils'
 import VideoCardUnit from '../VideoCardUnit'
 
-interface A {
-  [key: string]: string
+interface SceneProps {
+  setIsWaiting: () => void
 }
 
-const Scene = () => {
+const Scene = ({ setIsWaiting }: SceneProps) => {
   const containerRef = useRef<HTMLDivElement>(null)
   const lecRef = useRef<any>(null)
   const css3dRef = useRef<any>(null)
   const controlsRef = useRef<any>(null)
 
   useEffect(() => {
-    const { lec, css3d, controls } = init()
+    const { lec, css3d, } = init()
     lecRef.current = lec
     css3dRef.current = css3d
-    controlsRef.current = controls
+
+    // controlsRef.current = controls
   }, []);
 
   useLayoutEffect(() => {
@@ -28,6 +29,7 @@ const Scene = () => {
         css3dRef.current,
         controlsRef.current,
         containerRef.current,
+        setIsWaiting,
         <VideoCardUnit key={lecRef.current}></VideoCardUnit>,
       ) as unknown as Record<string, Array<(e: Event) => void>>
     }
