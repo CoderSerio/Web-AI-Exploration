@@ -102,7 +102,7 @@ def main():
                })
     model, history = train(train_x, train_y, test_x, test_y)
     print(history)
-    model.save('./packages/solutions/python-server/models/MobileNetV3_{}.h5'.format(
+    model.save('./packages/solutions/python-server/models/MobileNetV3_{}.keras'.format(
         history.history['val_accuracy'][-1]))
     draw_loss(history)
     wandb.finish()

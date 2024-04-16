@@ -6,7 +6,8 @@
     "backend-for-frontend": "8810",
     "backend-for-frontend-ws": "8811",
     "solution-python-server": "8820",
-    "solution-nodejs-server": "8830"
+    "solution-nodejs-server": "8830",
+    "solution-llm-server": "8840"
   },
   "socket-keys": {
     "frontend": "frontend-message",

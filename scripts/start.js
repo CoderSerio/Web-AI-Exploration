@@ -63,13 +63,21 @@ const bffLauncher = new ProjectLauncher(
 );
 
 const pythonServerLauncher = new ProjectLauncher(
-  "Python Server",
+  "Python 服务器",
   "../packages/solutions/python-server",
   "python",
   "server.py"
+);
+
+const llmServerLauncher = new ProjectLauncher(
+  "Ollama 大模型",
+  ".", // 需要先全局安装 Ollama
+  "ollama",
+  "serve"
 );
 
 envServerLauncher.start();
 feLauncher.start();
 bffLauncher.start();
 pythonServerLauncher.start();
+llmServerLauncher.start();

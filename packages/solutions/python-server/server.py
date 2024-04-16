@@ -9,6 +9,7 @@ import tensorflow as tf
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 socketio = SocketIO(app)
+# model = tf.saved_model.load('path_to_saved_model')
 model = tf.keras.models.load_model(
     './models/MobileNetV3_0.9668367505073547.keras'
 )
