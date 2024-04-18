@@ -13,6 +13,7 @@
     "frontend": "frontend-message",
     "backend-for-frontend": "backend-for-frontend-message",
     "solution-python-server": "python-server-message",
-    "solution-nodejs-server": "nodejs-server-message"
+    "solution-nodejs-server": "nodejs-server-message",
+    "solution-llm-server": "llm-server-message"
   }
 }

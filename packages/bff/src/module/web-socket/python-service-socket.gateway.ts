@@ -8,7 +8,7 @@ export class PythonServiceSocketGateway extends BaseServiceSocket {
 
   constructor() {
     super('http://127.0.0.1:8820');
-    this.init('python-server-message');
+    this.init('backend-for-frontend-message');
   }
 
   public addClient(client: Socket) {
@@ -28,7 +28,6 @@ export class PythonServiceSocketGateway extends BaseServiceSocket {
   }
 
   public handleMessage(message: any): void {
-    console.log('这是什么', message);
     for (const client of this.clients) {
       client.emit('frontend-message', message);
     }

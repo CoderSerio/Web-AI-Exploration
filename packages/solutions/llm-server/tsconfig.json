@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "commonjs",
+    "lib": ["esnext", "dom"],
+    "typeRoots": ["node_modules/@types"],
+    "esModuleInterop": true
+  }
+}

@@ -1,3 +1,4 @@
+import { NodejsServiceSocketGateway } from './nodejs-service-socket.gateway';
 // import { NodejsServiceSocketGateway } from './../service-socket/nodejs-service-socket.gateway';
 import { PythonServiceSocketGateway } from './python-service-socket.gateway';
 import {
@@ -24,6 +25,7 @@ export class WebSocketGateway
   constructor(
     @Inject(PythonServiceSocketGateway)
     private readonly pythonServiceSocketGateway: PythonServiceSocketGateway,
+    private readonly nodejsServiceSocketGateway: NodejsServiceSocketGateway,
   ) {}
 
   afterInit(server: Server) {
@@ -41,9 +43,11 @@ export class WebSocketGateway
 
   @SubscribeMessage('backend-for-frontend-message')
   handleMessage(client: Socket, data: any): string {
-    console.log(`收到了来自[${data.id}]的数据\n`, data.content);
-    this.pythonServiceSocketGateway.send(data);
-    this.pythonServiceSocketGateway.addClient(client as any);
+    console.log(`收到了来自[${data.id}]的数据\n`);
+    // this.pythonServiceSocketGateway.send(data);
+    // this.pythonServiceSocketGateway.addClient(client as any);
+    this.nodejsServiceSocketGateway.send(data);
+    this.nodejsServiceSocketGateway.addClient(client as any);
     return 'data received';
   }
 }

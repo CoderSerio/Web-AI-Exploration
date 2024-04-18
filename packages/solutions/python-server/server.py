@@ -26,8 +26,8 @@ def handle_message(data):
     res = predict(model, nd_array).tolist()
     print(f"从 BFF 获取到了数据, 预测结果是: {res}\n")
     emit(
-        'python-server-message',
-        {'id': 'server', 'content': res}, broadcast=False
+        'backend-for-frontend-message',
+        {'type': 'server', 'id': 'python-server', 'content': res}, broadcast=False
     )
 
 

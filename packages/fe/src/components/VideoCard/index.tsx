@@ -7,7 +7,7 @@ interface VideoCanvasProps {
   socketRef: MutableRefObject<Socket>
 }
 
-const sizeHeight = 98, sizeWidth = 128, time = 500
+const sizeHeight = 98, sizeWidth = 128, time = 1000
 const VideoCanvas = ({ socketRef }: VideoCanvasProps) => {
   const canvasForCaptureRef = useRef<HTMLCanvasElement>(null)
   const canvasForResizedCaptureRef = useRef<HTMLCanvasElement>(null)

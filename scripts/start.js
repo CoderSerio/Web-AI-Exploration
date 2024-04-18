@@ -70,13 +70,13 @@ const pythonServerLauncher = new ProjectLauncher(
 );
 
 const llmServerLauncher = new ProjectLauncher(
-  "Ollama 大模型",
-  ".", // 需要先全局安装 Ollama
-  "ollama",
-  "serve"
+  "Ollama 大模型代理服务器",
+  "../packages/solutions/llm-server", // 需要先全局安装 Ollama
+  "npm",
+  "run start"
 );
 
-envServerLauncher.start();
+// envServerLauncher.start();
 feLauncher.start();
 bffLauncher.start();
 pythonServerLauncher.start();
