@@ -5,10 +5,11 @@ import styles from './index.module.css'
 
 interface VideoCanvasProps {
   socketRef: MutableRefObject<Socket>
+  solution: string
 }
 
 const sizeHeight = 98, sizeWidth = 128, time = 1000
-const VideoCanvas = ({ socketRef }: VideoCanvasProps) => {
+const VideoCanvas = ({ socketRef, solution }: VideoCanvasProps) => {
   const canvasForCaptureRef = useRef<HTMLCanvasElement>(null)
   const canvasForResizedCaptureRef = useRef<HTMLCanvasElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -73,7 +74,7 @@ const VideoCanvas = ({ socketRef }: VideoCanvasProps) => {
             image, x, y, width, height, offsetX, offsetY, scaledWidth, scaledHeight
           )
           const frameData = canvas.toDataURL('image/jpeg', 1)
-          socketRef.current.emit('backend-for-frontend-message', { id: 'frontend', content: frameData })
+          socketRef.current.emit('backend-for-frontend-message', { id: 'frontend', type: solution, content: frameData })
         })
         faceApi.draw.drawDetections(canvasForCaptureRef.current, faces)
       }

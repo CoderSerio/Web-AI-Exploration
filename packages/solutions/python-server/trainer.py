@@ -14,17 +14,16 @@ epochs = 100
 patience = 10
 num_classes = 7
 
+# 在 load 的过程中已经保证下标从0开始了
+
 
 def load():
     train_x, train_y = load_data(
         'packages/datasets/327labeled CK+', image_height, image_width, image_channel, num_classes)
     train_x, test_x, train_y, test_y = train_test_split(
         train_x, train_y, test_size=0.3, random_state=42)
-    # test_x, test_y = load_data('packages/datasets/images/validation',
-    #
 
     print('test', test_x)
-    # image_height, image_width, image_channel, num_classes)
     return train_x, train_y, test_x, test_y
 
 

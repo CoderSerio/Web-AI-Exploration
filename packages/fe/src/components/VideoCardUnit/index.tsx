@@ -7,21 +7,21 @@ import { createVideoStreamWebSocketConnection } from '@/apis';
 import styles from './index.module.css'
 
 const enum2expression = [
-  '生气😡', '厌恶🤢', '担忧😟', '开心🥳', '平静😐', '伤心😢', '惊讶🙀'
+  '生气😡', '平静😐', '厌恶🤢', '害怕😨', '开心🥳', '伤心😢', '惊讶🙀'
 ]
 
 const items = [
-  { text: "Python Server" },
-  { text: "LLM Server" },
+  { text: "Python-Server" },
+  { text: "LLM-Server" },
   { text: "TODO" },
 ]
 
 
 const VideoCardUnit: React.FC = () => {
-  // const { name } = useModel('global');
   const socketRef = useRef<Socket>()
   const [predictions, setPredictions] = useState([])
   const [isLoading, setIsLoading] = useState<boolean>(true)
+  const [solution, setSolution] = useState<string>()
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -52,11 +52,11 @@ const VideoCardUnit: React.FC = () => {
             <div className={styles.header}>
               <label for="Select">方案：</label>
               <select id="Select" onChange={(e) => {
-                console.log('e',)
+                setSolution(e.target.value)
               }}>
                 {items.map((item) => {
                   return (
-                    <option value={item.text}>{item.text}</option>
+                    <option key={item.text} value={item.text}>{item.text}</option>
                   )
                 })}
 
@@ -71,7 +71,7 @@ const VideoCardUnit: React.FC = () => {
               })}
             </div>
             <div className={styles.top}>
-              <VideoCanvas socketRef={socketRef as any}></VideoCanvas>
+              <VideoCanvas solution={solution} socketRef={socketRef as any}></VideoCanvas>
             </div>
           </div>
         )

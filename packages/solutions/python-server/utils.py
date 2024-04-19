@@ -16,8 +16,8 @@ import re
 image_height = 98
 image_width = 128
 
-number_2_expression = ['angry', 'disgust',
-                       'fear', 'happy', 'neutral', 'sad', 'surprise']
+number_2_expression = ['angry', 'neutral', 'disgust',
+                       'fear', 'happy', 'sad', 'surprised']
 expression_2_number = {expression: index for index,
                        expression in enumerate(number_2_expression)}
 
@@ -36,7 +36,9 @@ def load_data(folder_path, height, weight, channel, class_num):
                 image_path = os.path.join(label_folder_path, image_name)
                 image = Image.open(image_path).convert('RGB')
                 resized_image = image.resize(
-                    (height, weight), Image.Resampling.LANCZOS)
+                    (height, weight),
+                    Image.Resampling.LANCZOS
+                )
                 image_nd_array = np.array(resized_image) / 255
                 formatted_image = image_nd_array.reshape(
                     (height, weight, channel))
