@@ -21,7 +21,7 @@ const VideoCardUnit: React.FC = () => {
   const socketRef = useRef<Socket>()
   const [predictions, setPredictions] = useState([])
   const [isLoading, setIsLoading] = useState<boolean>(true)
-  const [solution, setSolution] = useState<string>()
+  const [solution, setSolution] = useState<string>(items[0].text)
 
   useEffect(() => {
     const timer = setTimeout(() => {
