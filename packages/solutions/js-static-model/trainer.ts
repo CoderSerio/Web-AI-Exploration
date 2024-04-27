@@ -1,11 +1,9 @@
 import * as tf from "@tensorflow/tfjs-node";
 import mobileNetV3Large from "./model";
-import path from "path";
-import csv from "csv-parser"; // 或者使用其他支持TS的CSV解析库
-import { promisify } from "util";
 import * as fs from "fs";
-import { Tensor3D } from "@tensorflow/tfjs-node";
+import { EarlyStopping, Optimizer, Tensor3D } from "@tensorflow/tfjs-node";
 import { loadData, trainTestSplit } from "./utils";
+import path from "path";
 
 interface LabeledData {
   imagePath: string;
@@ -20,27 +18,58 @@ model.compile({
   metrics: ["MAE"],
 });
 
-const image_height = 98,
-  image_width = 128,
-  image_channel = 3,
-  batch_size = 20,
+const imageHeight = 98,
+  imageWidth = 128,
+  imageChannel = 3,
+  batchSize = 10,
   epochs = 100,
   patience = 10,
-  num_classes = 7;
+  numClasses = 7;
 
 async function train() {
   const [imagesPromises, labels] = loadData(
     "../../datasets/327labeled CK+",
-    image_height,
-    image_width,
-    image_channel,
-    num_classes
+    imageHeight,
+    imageWidth,
+    imageChannel,
+    numClasses
   );
   const images = await Promise.all(imagesPromises);
+  // 将图像Tensors堆叠成一个批次
+  const trainX = tf.stack(images);
+  const trainY = tf.oneHot(labels, numClasses);
 
-  const { trainX, trainY, testX, testY } = trainTestSplit(images, labels);
-  const model = mobileNetV3Large();
+  console.log("数据", trainX, trainY);
+
+  const model = mobileNetV3Large({
+    inputShape: [imageHeight, imageWidth, imageChannel],
+    alpha: 1.0,
+    includeTop: true,
+    numClasses,
+  });
   model.summary();
+
+  const optimizer = tf.train.adam(0.0005);
+  model.compile({
+    optimizer,
+    loss: "categoricalCrossentropy",
+    metrics: ["accuracy"],
+  });
+
+  const history = await model.fit(trainX, trainY, {
+    batchSize: 10,
+    verbose: 1,
+    epochs: 10,
+    // validationSplit: 0.3,
+    // callbacks: [
+    //   new EarlyStopping({
+    //     monitor: "val_loss",
+    //     patience,
+    //   }),
+    // ],
+  });
+  console.log(history);
+  await model.save("file://./models");
 }
 
 train();

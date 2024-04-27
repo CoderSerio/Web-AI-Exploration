@@ -45,7 +45,7 @@ export const loadData = (folderPath, height, weight, channel, classNum) => {
       const personDirPath = path.join(labelDirPath, personName);
       const imageNames = fs.readdirSync(personDirPath);
 
-      imageNames.forEach(async (imageName) => {
+      imageNames.forEach((imageName) => {
         const imagePath = path.join(personDirPath, imageName);
 
         const bufferPromise = sharp(imagePath)

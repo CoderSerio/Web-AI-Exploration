@@ -1,24 +1,22 @@
 import {
+  add,
   layers,
   model,
   mul,
-  Multiply,
   regularizers,
+  relu,
+  Relu,
+  relu6,
   scalar,
-  sequential,
   Tensor,
-  tensor4d,
 } from "@tensorflow/tfjs-node";
 
 function makeDivisible(ch, divisor = 8, minCh = null) {
   // 如果minCh未提供，则默认为divisor
-  minCh = minCh || divisor;
+  const min = minCh || divisor;
 
   // 计算最接近ch且能被divisor整除的数
-  let newCh = Math.max(
-    minCh,
-    Math.floor((ch + divisor / 2) / divisor) * divisor
-  );
+  let newCh = Math.max(min, Math.floor((ch + divisor / 2) / divisor) * divisor);
 
   // 确保向下取整不会减少超过原值的10%，若减少了则向上增加divisor
   if (newCh < 0.9 * ch) {
@@ -59,16 +57,15 @@ const handleActivation = ({ activation, name, x }) => {
 };
 
 class HardSigmoid extends layers.Layer {
+  relu6: Tensor<any>;
   constructor(config) {
     super(config);
-    (this as any).name = config.name;
-    (this as any).relu6 = layers.reLU({
-      maxValue: 6,
-    });
   }
 
-  call(inputs, kwargs) {
-    const x = (this as any).apply(inputs.add(3)).mul(scalar(1 / 6));
+  call(inputs) {
+    const shiftedInputs = add(inputs[0], scalar(3));
+    const scaledInputs = shiftedInputs.div(scalar(6));
+    const x = relu6(scaledInputs);
     return x;
   }
 }
@@ -78,12 +75,12 @@ class HardSwish extends layers.Layer {
     (this as any).name = config.name;
     (this as any).hardSigmoid = new HardSigmoid({
       name: config.name,
-    }); // 假设HardSigmoid类已经存在且正确实现
+    });
   }
 
   call(inputs: Tensor, kwargs): Tensor | Tensor[] {
     const sigmoidOutput = (this as any).hardSigmoid.call(inputs, kwargs);
-    const result = mul(sigmoidOutput, inputs);
+    const result = mul(sigmoidOutput, inputs[0]);
     return result;
   }
 }
@@ -218,12 +215,7 @@ const invertedResBlock = ({
   return x;
 };
 
-const mobileNetV3Large = (
-  inputShape = [224, 224, 3],
-  numClass = 7,
-  alpha = 1.0,
-  includeTop = true
-) => {
+const mobileNetV3Large = ({ inputShape, alpha, includeTop, numClasses }) => {
   // tensor4d;
   let bottleNeck = partial(layers.batchNormalization, {
     epsilon: 0.001,
@@ -239,7 +231,6 @@ const mobileNetV3Large = (
       padding: "same",
       name: "Conv",
       useBias: false,
-      inputShape,
     })
     .apply(imgInput);
 
@@ -443,6 +434,7 @@ const mobileNetV3Large = (
 
   x = bottleNeck({ name: "Conv_1-BatchNorm-1" }).apply(x);
   x = new HardSigmoid({ name: "Conv_1-BatchNorm-2" }).apply(x);
+  console.log("这ok吗", x);
 
   if (includeTop) {
     x = layers.globalAveragePooling2d({}).apply(x);
@@ -461,10 +453,10 @@ const mobileNetV3Large = (
 
     x = layers
       .conv2d({
-        filters: lastPointC,
+        filters: numClasses,
         kernelSize: 1,
         padding: "same",
-        name: "Conv2-2",
+        name: "Logits-Conv2d_1c_1x1",
       })
       .apply(x);
     x = layers.flatten().apply(x);
