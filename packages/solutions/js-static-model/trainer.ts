@@ -29,16 +29,16 @@ const image_height = 98,
   num_classes = 7;
 
 async function train() {
-  // const [imagesPromises, labels] = loadData(
-  //   "../../datasets/327labeled CK+",
-  //   image_height,
-  //   image_width,
-  //   image_channel,
-  //   num_classes
-  // );
-  // const images = await Promise.all(imagesPromises);
+  const [imagesPromises, labels] = loadData(
+    "../../datasets/327labeled CK+",
+    image_height,
+    image_width,
+    image_channel,
+    num_classes
+  );
+  const images = await Promise.all(imagesPromises);
 
-  // const { trainX, trainY, testX, testY } = trainTestSplit(images, labels);
+  const { trainX, trainY, testX, testY } = trainTestSplit(images, labels);
   const model = mobileNetV3Large();
   model.summary();
 }

@@ -23,7 +23,6 @@ def load():
     train_x, test_x, train_y, test_y = train_test_split(
         train_x, train_y, test_size=0.3, random_state=42)
 
-    print('test', test_x)
     return train_x, train_y, test_x, test_y
 
 
