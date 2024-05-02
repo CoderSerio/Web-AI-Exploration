@@ -74,19 +74,17 @@ export const trainTestSplit = (
   const testSetLen = Math.floor(x.length * 0.3);
   // const trainSetLen = x.length - testSetLen;
 
-  const trainX = [],
-    trainY = [],
-    testX = [],
-    testY = [];
+  const trainX: any[] = [],
+    trainY: any[] = [],
+    testX: any[] = [],
+    testY: any[] = [];
 
   const shuffle = () => {
     let { length } = x;
     for (let i = 0; i < x.length; i++) {
       const luckyKey = Math.floor(Math.random() * length + i);
-      [x[i], x[luckyKey]] = [x[luckyKey], x[i]][(y[i], y[luckyKey])] = [
-        y[luckyKey],
-        y[i],
-      ];
+      [x[i], x[luckyKey]] = [x[luckyKey], x[i]];
+      [y[i], y[luckyKey]] = [y[luckyKey], y[i]];
       length--;
     }
   };
