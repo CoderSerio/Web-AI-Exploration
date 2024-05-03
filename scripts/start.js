@@ -43,12 +43,12 @@ class ProjectLauncher {
   }
 }
 
-const envServerLauncher = new ProjectLauncher(
-  "环境服务",
-  ".",
-  "node",
-  "env-server.js"
-);
+// const envServerLauncher = new ProjectLauncher(
+//   "环境服务",
+//   ".",
+//   "node",
+//   "env-server.js"
+// );
 const feLauncher = new ProjectLauncher(
   "前端",
   "../packages/fe",

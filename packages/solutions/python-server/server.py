@@ -1,8 +1,6 @@
 from flask import Flask
 from flask_socketio import SocketIO, emit
 from flask_cors import CORS
-from utils import format_data_from_frontend
-import json
 from utils import format_data_from_frontend, predict
 import tensorflow as tf
 
@@ -11,8 +9,10 @@ cors = CORS(app, resources={r"/*": {"origins": "*"}})
 socketio = SocketIO(app)
 # model = tf.saved_model.load('path_to_saved_model')
 model = tf.keras.models.load_model(
-    './models/MobileNetV3_0.9668367505073547.keras'
+    './models/MobileNetV3_0.9795918464660645.keras'
 )
+print('模型：')
+print(model)
 
 
 @app.route('/')

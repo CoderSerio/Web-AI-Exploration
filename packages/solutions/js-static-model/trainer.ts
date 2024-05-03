@@ -12,13 +12,12 @@ interface LabeledData {
 const imageHeight = 98,
   imageWidth = 128,
   imageChannel = 3,
-  batchSize = 20,
-  epochs = 40,
+  batchSize = 5,
+  epochs = 2,
   patience = 10,
   numClasses = 7;
 
 async function train() {
-  wandb.login({ key: "b67fa778fefd3092eb9112f37886285906ad87ef" });
   wandb.init({
     project: "your_project_name",
     name: "mobilenet_v3_large_js",
@@ -42,11 +41,8 @@ async function train() {
   );
   const images = await Promise.all(imagesPromises);
   // 将图像Tensors堆叠成一个批次
-  const { trainX, trainY, testX, testY } = trainTestSplit(images, labels, 0.3);
-  const trX = tf.stack(trainX);
-  const teX = tf.stack(testX);
-  const trY = tf.oneHot(trainY, numClasses);
-  const teY = tf.oneHot(testY, numClasses);
+  const trainX = tf.stack(images);
+  const trainY = tf.oneHot(labels, numClasses);
 
   const model = mobileNetV3Large({
     inputShape: [imageHeight, imageWidth, imageChannel],
@@ -63,12 +59,11 @@ async function train() {
     metrics: ["accuracy"],
   });
 
-  console.log("启动！");
   const history = await model.fit(trainX, trainY, {
     batchSize,
     verbose: 1,
     epochs,
-    validationData: [teX, teY],
+    validationSplit: 0.3,
     callbacks: [
       new EarlyStopping({
         monitor: "val_loss",
@@ -78,19 +73,20 @@ async function train() {
   });
 
   for (const epoch in history.history["loss"]) {
+    console.log(history, history.history);
     wandb.log({
-      train_loss: history.history["loss"][epoch],
-      train_accuracy: history.history["accuracy"][epoch],
+      train_loss: history.history["loss"]?.[epoch] ?? 0,
+      train_accuracy: history.history["accuracy"]?.[epoch] ?? 0,
     });
     wandb.log({
-      val_loss: history.history["val_loss"][epoch],
-      val_accuracy: history.history["val_accuracy"][epoch],
+      val_loss: history.history["val_loss"]?.[epoch] ?? 0,
+      val_accuracy: history.history["val_accuracy"]?.[epoch] ?? 0,
     });
   }
 
   console.log(history);
   await model.save(
-    `file://./packages/solutions/python-server/models/model_${history.history?.["acc"] ?? "unknown"}`
+    `file://./packages/solutions/js-static-model/models/model_${history.history?.["accuracy"] ?? "unknown"}`
   );
   wandb.finish();
 }

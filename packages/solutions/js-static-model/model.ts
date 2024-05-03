@@ -4,8 +4,6 @@ import {
   model,
   mul,
   regularizers,
-  relu,
-  Relu,
   relu6,
   scalar,
   Tensor,

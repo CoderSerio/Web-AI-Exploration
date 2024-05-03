@@ -39,6 +39,12 @@ importers:
       '@nestjs/websockets':
         specifier: ^10.3.3
         version: 10.3.3(@nestjs/common@10.0.0(reflect-metadata@0.2.0)(rxjs@7.8.1))(@nestjs/core@10.0.0)(@nestjs/platform-socket.io@10.3.3)(reflect-metadata@0.2.0)(rxjs@7.8.1)
+      '@types/long':
+        specifier: ^5.0.0
+        version: 5.0.0
+      long:
+        specifier: ^5.2.3
+        version: 5.2.3
       reflect-metadata:
         specifier: ^0.2.0
         version: 0.2.0
@@ -2932,6 +2938,9 @@ packages:
   long@4.0.0:
     resolution: {integrity: sha512-XsP+KhQif4bjX1kbuSiySJFNAehNxgLb6hPRGJ9QsUr8ajHkuXGdrHmFUTUUXhDwVX2R5bY4JNZEwbUiMhV+MA==}
 
+  long@5.2.3:
+    resolution: {integrity: sha512-lcHwpNoggQTObv5apGNCTdJrO69eHOZMi4BNC+rTLER8iHAqGrUVeLh/irVIM7zTw2bOXA8T6uNPeujwOLg/2Q==}
+
   loose-envify@1.4.0:
     resolution: {integrity: sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==}
     hasBin: true
@@ -5230,7 +5239,7 @@ snapshots:
 
   '@types/long@5.0.0':
     dependencies:
-      long: 4.0.0
+      long: 5.2.3
 
   '@types/methods@1.1.4': {}
 
@@ -7445,6 +7454,8 @@ snapshots:
       is-unicode-supported: 0.1.0
 
   long@4.0.0: {}
+
+  long@5.2.3: {}
 
   loose-envify@1.4.0:
     dependencies:
