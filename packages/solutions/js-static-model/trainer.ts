@@ -10,11 +10,11 @@ interface LabeledData {
 }
 
 const imageHeight = 98,
-  imageWidth = 128,
+  imageWidth = 112,
   imageChannel = 3,
-  batchSize = 5,
-  epochs = 2,
-  patience = 10,
+  batchSize = 20,
+  epochs = 30,
+  patience = 8,
   numClasses = 7;
 
 async function train() {

@@ -6,12 +6,12 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 import wandb
 
-image_height = 98
-image_width = 128
+image_height = 128
+image_width = 96
 image_channel = 3
 batch_size = 20
 epochs = 100
-patience = 10
+patience = 5
 num_classes = 7
 
 # 在 load 的过程中已经保证下标从0开始了

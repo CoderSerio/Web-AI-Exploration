@@ -13,8 +13,8 @@ import base64
 import cv2
 import re
 
-image_height = 98
-image_width = 128
+image_height = 128
+image_width = 96
 
 number_2_expression = ['angry', 'neutral', 'disgust',
                        'fear', 'happy', 'sad', 'surprised']

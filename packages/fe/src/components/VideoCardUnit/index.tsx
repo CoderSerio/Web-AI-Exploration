@@ -50,7 +50,6 @@ const VideoCardUnit: React.FC = () => {
         ) : (
           <div className={styles.container}>
             <div className={styles.header}>
-              <label for="Select">方案：</label>
               <select id="Select" onChange={(e) => {
                 setSolution(e.target.value)
               }}>
@@ -64,7 +63,7 @@ const VideoCardUnit: React.FC = () => {
             </div>
             <div className={styles.bottom}>
               <div className={styles.title}>预测结果</div>
-              {predictions.map((prediction) => {
+              {predictions?.map((prediction) => {
                 return (
                   <div className={styles.expression}>{enum2expression[prediction]}</div>
                 )

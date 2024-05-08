@@ -8,7 +8,7 @@ interface VideoCanvasProps {
   solution: string
 }
 
-const sizeHeight = 98, sizeWidth = 128, time = 1000
+const sizeHeight = 128, sizeWidth = 96, time = 1000
 const VideoCanvas = ({ socketRef, solution }: VideoCanvasProps) => {
   const canvasForCaptureRef = useRef<HTMLCanvasElement>(null)
   const canvasForResizedCaptureRef = useRef<HTMLCanvasElement>(null)
