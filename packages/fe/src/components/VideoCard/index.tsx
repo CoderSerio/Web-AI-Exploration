@@ -2,7 +2,7 @@ import { useRef, useLayoutEffect, MutableRefObject } from "react"
 import { Socket } from "socket.io-client"
 import * as faceApi from '@vladmandic/face-api';
 import { expression2num, items } from "@/common/const";
-
+import styles from './index.module.css'
 interface VideoCanvasProps {
   socketRef: MutableRefObject<Socket>
   getSolution: () => number
@@ -55,7 +55,6 @@ const VideoCanvas = ({ socketRef, getSolution, setPredictions }: VideoCanvasProp
 
     for (let index = 0; index < keys.length; index++) {
       const key = keys[index];
-      console.log('max', obj[key], +max)
       if (+obj[key] > +max) {
         maxIndex = index
         max = obj[key]
@@ -75,8 +74,6 @@ const VideoCanvas = ({ socketRef, getSolution, setPredictions }: VideoCanvasProp
         const solution = getSolution()
         const text = items?.[solution as unknown as number].text
 
-
-        console.log('faces', faces)
         faces.forEach((face) => {
 
           const { width, height, x, y } = face.detection.box as any
@@ -99,7 +96,6 @@ const VideoCanvas = ({ socketRef, getSolution, setPredictions }: VideoCanvasProp
 
           if (solution === 2 && face?.expressions) {
             const key = getMostPossibleKey(face.expressions as unknown as Record<string, number>)
-            console.log('face', face.expressions, key)
             const res = expression2num[key] ?? -1
             setPredictions([res])
           } else {
@@ -128,7 +124,7 @@ const VideoCanvas = ({ socketRef, getSolution, setPredictions }: VideoCanvasProp
   }, [])
 
   return (
-    <div>
+    <div className={styles.container}>
 
       <canvas width={sizeWidth} height={sizeHeight} ref={canvasForResizedCaptureRef} style={{
         width: sizeWidth,

@@ -1,19 +1,18 @@
+.wrapper {
+}
+
 .container {
   padding-top: 80px;
   display: flex;
   flex-direction: column;
 
   .header {
-    position: fixed;
-    top: 100px;
-
+    display: flex;
     input {
-      height: 200px;
     }
   }
 
   .top {
-    width: 1300px;
   }
 
   .bottom {

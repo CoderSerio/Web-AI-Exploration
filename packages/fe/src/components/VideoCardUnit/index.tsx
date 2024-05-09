@@ -1,6 +1,5 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-// import styles from './index.less';
 import VideoCanvas from '../VideoCard';
 import { Socket } from 'socket.io-client';
 import { createVideoStreamWebSocketConnection } from '@/apis';
@@ -42,7 +41,7 @@ const VideoCardUnit: React.FC = () => {
   }
 
   return (
-    <div className={styles.window}>
+    <div className={styles.wrapper}>
       {isLoading ?
         (
           <div className={styles.loadingWrapper}>
@@ -53,11 +52,11 @@ const VideoCardUnit: React.FC = () => {
         ) : (
           <div className={styles.container}>
             <div className={styles.header}>
+              <div>请选择推理方案：</div>
               <Select
-                placeholder='Please select'
-                style={{ width: 154 }}
+                placeholder='请选择方案'
+                style={{ width: '50%' }}
                 onChange={(value) => {
-                  console.log('选了变了吗', value)
                   setSolution(value)
                 }}
                 defaultValue={0}

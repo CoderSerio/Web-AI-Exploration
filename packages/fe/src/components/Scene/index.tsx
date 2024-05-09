@@ -1,7 +1,8 @@
 import { useEffect, useLayoutEffect, useRef } from 'react'
 import styles from './index.module.css'
-import { init, start } from './utils'
+import { init, start, } from './3d'
 import VideoCardUnit from '../VideoCardUnit'
+import Window from '../Window'
 
 interface SceneProps {
   setIsWaiting: () => void
@@ -17,8 +18,6 @@ const Scene = ({ setIsWaiting }: SceneProps) => {
     const { lec, css3d, } = init()
     lecRef.current = lec
     css3dRef.current = css3d
-
-    // controlsRef.current = controls
   }, []);
 
   useLayoutEffect(() => {
@@ -30,7 +29,8 @@ const Scene = ({ setIsWaiting }: SceneProps) => {
         controlsRef.current,
         containerRef.current,
         setIsWaiting,
-        <VideoCardUnit key={lecRef.current}></VideoCardUnit>,
+        <VideoCardUnit></VideoCardUnit>,
+        <Window></Window>
       ) as unknown as Record<string, Array<(e: Event) => void>>
     }
 
