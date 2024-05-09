@@ -43,15 +43,15 @@ export class WebSocketGateway
 
   @SubscribeMessage('backend-for-frontend-message')
   handleMessage(client: Socket, data: any): string {
-    console.log(`收到了来自[${data.id}]的数据\n`);
+    console.log(`收到了来自[${data.id}]的数据\n`, data.type);
 
-    // if (data.type === 'Python-Server') {
-    this.pythonServiceSocketGateway.send(data);
-    this.pythonServiceSocketGateway.addClient(client as any);
-    // } else if (data.type === 'LLM-Server') {
-    //   this.nodejsServiceSocketGateway.send(data);
-    //   this.nodejsServiceSocketGateway.addClient(client as any);
-    // }
+    if (data.type === 'Python-Server') {
+      this.pythonServiceSocketGateway.send(data);
+      this.pythonServiceSocketGateway.addClient(client as any);
+    } else if (data.type === 'LLM-Server') {
+      this.nodejsServiceSocketGateway.send(data);
+      this.nodejsServiceSocketGateway.addClient(client as any);
+    }
     return 'data received';
   }
 }

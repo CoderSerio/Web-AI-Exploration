@@ -1,15 +1,16 @@
-import { useRef, useLayoutEffect, MutableRefObject, useEffect } from "react"
+import { useRef, useLayoutEffect, MutableRefObject } from "react"
 import { Socket } from "socket.io-client"
 import * as faceApi from '@vladmandic/face-api';
-import styles from './index.module.css'
+import { expression2num, items } from "@/common/const";
 
 interface VideoCanvasProps {
   socketRef: MutableRefObject<Socket>
-  solution: string
+  getSolution: () => number
+  setPredictions: (e: Array<number>) => void
 }
 
 const sizeHeight = 128, sizeWidth = 96, time = 1000
-const VideoCanvas = ({ socketRef, solution }: VideoCanvasProps) => {
+const VideoCanvas = ({ socketRef, getSolution, setPredictions }: VideoCanvasProps) => {
   const canvasForCaptureRef = useRef<HTMLCanvasElement>(null)
   const canvasForResizedCaptureRef = useRef<HTMLCanvasElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -47,6 +48,23 @@ const VideoCanvas = ({ socketRef, solution }: VideoCanvasProps) => {
     }
   }
 
+  /** 用于静态化模型在前端 */
+  const getMostPossibleKey = (obj: Record<string, number>) => {
+    const keys = Object.keys(obj)
+    let max = -1, maxIndex = 0
+
+    for (let index = 0; index < keys.length; index++) {
+      const key = keys[index];
+      console.log('max', obj[key], +max)
+      if (+obj[key] > +max) {
+        maxIndex = index
+        max = obj[key]
+      }
+    }
+
+    return keys[maxIndex]
+  }
+
   const updateFaceMark = async (base64: string) => {
     const image = new Image()
     image.src = base64
@@ -54,6 +72,11 @@ const VideoCanvas = ({ socketRef, solution }: VideoCanvasProps) => {
       if (canvasForCaptureRef.current && isFaceMarkLoadedRef.current) {
         const options = new faceApi.SsdMobilenetv1Options()
         const faces = await faceApi.detectAllFaces(image, options).withFaceLandmarks().withFaceExpressions()
+        const solution = getSolution()
+        const text = items?.[solution as unknown as number].text
+
+
+        console.log('faces', faces)
         faces.forEach((face) => {
 
           const { width, height, x, y } = face.detection.box as any
@@ -73,8 +96,17 @@ const VideoCanvas = ({ socketRef, solution }: VideoCanvasProps) => {
           ctx?.drawImage(
             image, x, y, width, height, offsetX, offsetY, scaledWidth, scaledHeight
           )
-          const frameData = canvas.toDataURL('image/jpeg', 1)
-          socketRef.current.emit('backend-for-frontend-message', { id: 'frontend', type: solution, content: frameData })
+
+          if (solution === 2 && face?.expressions) {
+            const key = getMostPossibleKey(face.expressions as unknown as Record<string, number>)
+            console.log('face', face.expressions, key)
+            const res = expression2num[key] ?? -1
+            setPredictions([res])
+          } else {
+            const frameData = canvas.toDataURL('image/jpeg', 1)
+            socketRef.current.emit('backend-for-frontend-message', { id: 'frontend', type: text, content: frameData })
+          }
+
         })
         faceApi.draw.drawDetections(canvasForCaptureRef.current, faces)
       }
@@ -85,8 +117,7 @@ const VideoCanvas = ({ socketRef, solution }: VideoCanvasProps) => {
     initFaceMark()
     setupCamera();
 
-    let timer: NodeJS.Timeout
-    timer = setInterval(() => {
+    const timer = setInterval(() => {
       const frameData = getSingleFrame()
       updateFaceMark(frameData as string)
     }, time)
@@ -98,6 +129,7 @@ const VideoCanvas = ({ socketRef, solution }: VideoCanvasProps) => {
 
   return (
     <div>
+
       <canvas width={sizeWidth} height={sizeHeight} ref={canvasForResizedCaptureRef} style={{
         width: sizeWidth,
         height: sizeHeight,

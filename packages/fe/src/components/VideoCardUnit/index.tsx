@@ -5,23 +5,21 @@ import VideoCanvas from '../VideoCard';
 import { Socket } from 'socket.io-client';
 import { createVideoStreamWebSocketConnection } from '@/apis';
 import styles from './index.module.css'
-
-const enum2expression = [
-  '生气😡', '平静😐', '厌恶🤢', '害怕😨', '开心🥳', '伤心😢', '惊讶🙀'
-]
-
-const items = [
-  { text: "Python-Server" },
-  { text: "LLM-Server" },
-  { text: "TODO" },
-]
-
+import { Select } from '@arco-design/web-react';
+import { enum2expression, items } from '@/common/const';
+const Option = Select.Option;
 
 const VideoCardUnit: React.FC = () => {
   const socketRef = useRef<Socket>()
-  const [predictions, setPredictions] = useState([])
+  const [predictions, setPredictions] = useState<Array<number>>([])
   const [isLoading, setIsLoading] = useState<boolean>(true)
-  const [solution, setSolution] = useState<string>(items[0].text)
+  const [solution, setSolution] = useState<number>(0)
+  const solutionRef = useRef(0)
+
+  useEffect(() => {
+    solutionRef.current = solution
+  }, [solution])
+
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -38,6 +36,11 @@ const VideoCardUnit: React.FC = () => {
     })
   }, [])
 
+
+  const getLatestSolution = () => {
+    return solutionRef.current
+  }
+
   return (
     <div className={styles.window}>
       {isLoading ?
@@ -50,27 +53,33 @@ const VideoCardUnit: React.FC = () => {
         ) : (
           <div className={styles.container}>
             <div className={styles.header}>
-              <select id="Select" onChange={(e) => {
-                setSolution(e.target.value)
-              }}>
-                {items.map((item) => {
-                  return (
-                    <option key={item.text} value={item.text}>{item.text}</option>
-                  )
-                })}
+              <Select
+                placeholder='Please select'
+                style={{ width: 154 }}
+                onChange={(value) => {
+                  console.log('选了变了吗', value)
+                  setSolution(value)
+                }}
+                defaultValue={0}
+              >
+                {items.map((option, index) => (
+                  <Option key={index} value={index}>
+                    {option.text}
+                  </Option>
+                ))}
+              </Select>
 
-              </select>
             </div>
             <div className={styles.bottom}>
               <div className={styles.title}>预测结果</div>
-              {predictions?.map((prediction) => {
+              {predictions?.map((prediction, index) => {
                 return (
-                  <div className={styles.expression}>{enum2expression[prediction]}</div>
+                  <div className={styles.expression} key={index}>{enum2expression[prediction]}</div>
                 )
               })}
             </div>
             <div className={styles.top}>
-              <VideoCanvas solution={solution} socketRef={socketRef as any}></VideoCanvas>
+              <VideoCanvas setPredictions={(e: Array<number>) => { setPredictions(e) }} getSolution={getLatestSolution} socketRef={socketRef as any}></VideoCanvas>
             </div>
           </div>
         )
