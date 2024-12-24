@@ -52,7 +52,8 @@ const Window = (props: SceneProps) => {
         autoFocus={false}
         focusLock={true}
       >
-        这是西南石油大学的沈俞佑（202031061479）的本科毕业设计作品：《基于Web的人脸表情识别》
+        这是我的毕业设计作品。
+        https://github.com/CoderSerio/Web-AI-Exploration
       </Modal>
 
       <div className={styles.footer}>
