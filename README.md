@@ -12,7 +12,7 @@
 - 浏览器端使用 TensorFlow.js 加载 MobileNetV3 模型
 - 浏览器端使用 Ollama 部署 Laava 7B 多模态大模型
 
-此外，对于 3D 场景则是使用 Lec3d.js 库实现（基于 Three.js），由于本项目重心不是构建 3D 场景，同时自己对于 Three.js 还处于探索阶段，所以 3D 场景相对有些粗糙。
+此外，对于 3D 场景则是使用 [Lec3d.js](https://github.com/lec-org/lec3d) 库实现（鄙人基于自己的 Three.js 开发经验封装的一个玩具库），由于本项目重心不是构建 3D 场景，同时自己对于 Three.js 还处于探索阶段，所以 3D 场景相对有些粗糙。
 
 > 3D 模型是网上找的，然后现学现卖 Blender 自己微调了一下，同时加了个运动的动画。
 
